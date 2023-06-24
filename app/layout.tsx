@@ -13,11 +13,6 @@ import { usePathname } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata = {
-    title: 'Becoming a Drummer',
-    description: 'Learn how to play the drums.',
-};
-
 let theme: Theme = createTheme({
     palette: {
         mode: 'dark',
