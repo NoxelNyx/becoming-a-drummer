@@ -11,7 +11,7 @@ type SearchResultProps = {
     url: string,
     title: string,
     description: string,
-    duration: string,
+    duration: number,
     videoId: string
 }
 

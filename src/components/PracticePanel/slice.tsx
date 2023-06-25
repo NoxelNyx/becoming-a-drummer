@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '@/src/redux/store';
-import { fetchBookmarks } from './api';
+import { fetchBookmarks, addBookmark, deleteBookmark } from './api';
 
 export interface Bookmark {
+    id?: string,
     videoId?: string,
     title: string,
-    duration: string,
+    duration: number,
 }
 
 export interface PracticeSession {
@@ -27,9 +28,21 @@ const initialState: PracticePanelState = {
 export const getBookmarksAsync = createAsyncThunk(
     'bookmarks/fetch',
     async (uid: string) => {
-        const bookmarks = await fetchBookmarks(uid);
+        return await fetchBookmarks(uid);
+    }
+);
 
-        return bookmarks;
+export const addBookmarkAsync = createAsyncThunk(
+    'bookmarks/add',
+    async (args: { uid: string, newBookmark: Bookmark }) => {
+        return await addBookmark(args.uid, args.newBookmark);
+    }
+);
+
+export const deleteBookmarkAsync = createAsyncThunk(
+    'bookmarks/delete',
+    async (args: { uid: string, bookmarkId: string }) => {
+        return await deleteBookmark(args.uid, args.bookmarkId);
     }
 );
 
@@ -42,10 +55,16 @@ export const practicePanelSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(getBookmarksAsync.pending, (state) => {
+        builder.addCase(getBookmarksAsync.fulfilled, (state, action) => {
+            state.bookmarks = action.payload as Bookmark[];
         })
-        .addCase(getBookmarksAsync.fulfilled, (state, action) => {
-            state.bookmarks = action.payload as any;
+        .addCase(addBookmarkAsync.fulfilled, (state, action) => {
+            state.bookmarks.push(action.payload as any);
+        })
+        .addCase(deleteBookmarkAsync.fulfilled, (state, action) => {
+            state.bookmarks = state.bookmarks.filter((bookmark) => {
+                return bookmark.id !== action.payload;
+            });
         });
     }
 });

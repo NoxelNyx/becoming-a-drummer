@@ -13,5 +13,5 @@ export default function GrooveScribe({
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 title="GrooveScribe"
-                src={`http://montulli.github.io/GrooveScribe/${urlParams}`} />);
+                src={`https://montulli.github.io/GrooveScribe/?${urlParams}`} />);
 };

@@ -7,7 +7,7 @@ import Image from 'next/image';
 type ThumbnailProps = {
     url: string,
     title: string,
-    duration: string,
+    duration: number,
     height?: number | string,
     width?: number | string
 };
@@ -34,15 +34,12 @@ const Div = styled('div')(styles);
 const Span = styled('span')(styles);
 
 const Thumbnail: FC<ThumbnailProps> = ({ url, title, duration, height, width }): ReactElement => {
-    const durationHours = moment.duration(duration).hours();
-    const durationMinutes = moment.duration(duration).minutes();
-    const durationSeconds = moment.duration(duration).seconds();
-    const friendlyDuration = (durationHours !== 0) ? (durationHours + ':' + durationMinutes + ':' + durationSeconds) : (durationMinutes + ':' + durationSeconds);
+    const durationMoment = moment.utc(duration * 1000).format('HH:mm:ss');
 
     return (
         <Div>
             <Image src={url} height={180} width={345} alt={title} />
-            <Span sx={styles.videoDuration}>{friendlyDuration}</Span>
+            <Span sx={styles.videoDuration}>{durationMoment}</Span>
         </Div>
     );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Tabs, Tab, Typography, AppBar } from '@mui/material';
+import { Box, Tabs, Tab, Typography, AppBar, Grid, Paper } from '@mui/material';
 import GrooveScribe from './components/GrooveScribe';
 
 interface TabPanelProps {
@@ -33,9 +33,15 @@ function a11yProps(index: number) {
 
 export default function LessonPanel({ className }: { className?: string }) {
     const [value, setValue] = React.useState(0);
+    const [gsParams, setGsParams] = React.useState('TimeSig=4/4&Div=16&Tempo=80&Measures=1&H=%7Cxxxxxxxxxxxxxxxx%7C&S=%7C----O-------O---%7C&K=%7Co-------o-------%7C');
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
+    };
+
+    const handleGsParamsChange = () => {
+        const params = 'TimeSig=4/4&Div=16&Tempo=82&Measures=4&MetronomeFreq=8&H=|c---b-b-bb-b-bb-|b-bb-b-b-bb-b---|----b-b-bb-b-bb-|b-bb-b-b-bb-b---|&S=|O--O-O-O--O-O--O|-O--O-O-O--O-OOO|O--O-O-O--O-O--O|-O--O-O-O--O-OO-|&K=|-oo-o-o-oo-o-oo-|o-oo-o-o-oo-o---|-oo-o-o-oo-o-oo-|o-oo-o-o-oo-o--o|';
+        setGsParams(params);
     };
 
     return (
@@ -56,7 +62,14 @@ export default function LessonPanel({ className }: { className?: string }) {
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-                <GrooveScribe className='w-full h-full' urlParams='?TimeSig=4/4&Div=16&Tempo=80&Measures=1&H=%7Cxxxxxxxxxxxxxxxx%7C&S=%7C----O-------O---%7C&K=%7Co-------o-------%7C`' />
+                <Box>
+                    <Grid container spacing={{ xs: 2, md: 3 }} marginBottom={2} marginTop={8}>
+                        <Grid item xs={2}>
+                            <Paper sx={{ height: 50, cursor: 'pointer' }} onClick={handleGsParamsChange}>C.A.N.C.E.R.</Paper>
+                        </Grid>
+                    </Grid>
+                </Box>
+                <GrooveScribe className='w-full h-full' urlParams={gsParams} />
             </TabPanel>
             <TabPanel value={value} index={1}>
                 Item Two

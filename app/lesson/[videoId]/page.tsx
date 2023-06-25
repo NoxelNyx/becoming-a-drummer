@@ -31,7 +31,7 @@ export default function LessonPage({
 
     return (
         <Div sx={styles.root}>
-            <VideoEmbed id={params.videoId} />
+            <VideoEmbed videoId={params.videoId} />
             <LessonPanel className='mt-3 w-full' />
         </Div>
     );

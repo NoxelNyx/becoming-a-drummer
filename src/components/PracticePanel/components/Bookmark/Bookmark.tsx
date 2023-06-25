@@ -6,7 +6,7 @@ import Link from 'next/link';
 type BookmarkProps = {
     videoId?: string,
     title: string,
-    duration: string,
+    duration: number,
 };
 
 const Bookmark: FC<BookmarkProps> = ({ videoId, title, duration }) => {
