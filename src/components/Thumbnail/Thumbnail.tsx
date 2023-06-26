@@ -34,7 +34,7 @@ const Div = styled('div')(styles);
 const Span = styled('span')(styles);
 
 const Thumbnail: FC<ThumbnailProps> = ({ url, title, duration, height, width }): ReactElement => {
-    const durationMoment = moment.utc(duration * 1000).format('HH:mm:ss');
+    const durationMoment = moment.utc(duration * 1000).format('hh:mm:ss');
 
     return (
         <Div>

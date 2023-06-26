@@ -31,7 +31,7 @@ const styles = {
 const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
     let playerRef = React.useRef<any>(null);
     let bookmarkRef = React.useRef<BookmarkType | null>(null);
-    const [playbackRate, setPlaybackRate] = useState<number | undefined>(1);
+    const [playbackRate, setPlaybackRate] = useState<number>(1);
     const [localSections, setSections] = useState<any[]>([]);
     const { bookmarks } = useAppSelector(selectPracticePanelState);
     const { sections } = useAppSelector(selectVideoEmbedState);
@@ -122,7 +122,8 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
                                         end={section.end}
                                         repeat={section.repeat}
                                         playerRef={playerRef.current}
-                                        active={section.active} />
+                                        active={section.active}
+                                        playbackRate={playbackRate} />
                                 );
                             })
                         }

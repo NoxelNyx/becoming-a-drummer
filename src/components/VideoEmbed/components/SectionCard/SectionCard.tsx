@@ -11,10 +11,11 @@ interface SectionCardProps {
     repeat: number,
     gsParams?: string,
     active: boolean,
-    playerRef: YouTubePlayer
+    playerRef: YouTubePlayer,
+    playbackRate: number
 };
 
-export default function SectionCard({ id, start, end, repeat, gsParams, playerRef, active }: SectionCardProps) {
+export default function SectionCard({ id, start, end, repeat, gsParams, playerRef, active, playbackRate }: SectionCardProps) {
     let timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
     const dispatch = useAppDispatch();
 
@@ -41,7 +42,7 @@ export default function SectionCard({ id, start, end, repeat, gsParams, playerRe
                 timeoutRef.current = setTimeout(async () => {
                     if (await playerRef.getPlayerState() === 1)
                         handleClick();
-                }, (end - start + 1) * 1000);
+                }, ((end - start + 1) * 1000) / playbackRate);
 
                 playerRef.addEventListener('onStateChange', handleStateChange);
             }

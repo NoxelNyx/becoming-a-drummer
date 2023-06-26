@@ -65,7 +65,11 @@ export default function LessonPanel({ className }: { className?: string }) {
                 <Box>
                     <Grid container spacing={{ xs: 2, md: 3 }} marginBottom={2} marginTop={8}>
                         <Grid item xs={2}>
-                            <Paper sx={{ height: 50, cursor: 'pointer' }} onClick={handleGsParamsChange}>C.A.N.C.E.R.</Paper>
+                            <Paper sx={{ height: 50, cursor: 'pointer' }} onClick={handleGsParamsChange}>C.A.N.C.E.R. 1</Paper>
+                        </Grid>
+                        
+                        <Grid item xs={2}>
+                            <Paper sx={{ height: 50, cursor: 'pointer' }} onClick={() => { setGsParams('TimeSig=4/4&Div=16&Tempo=80&Measures=3&MetronomeFreq=8&H=|c---b-b-bb-b-bb-|b-bb-b-b--------|s-s-s-s-s-------|&S=|O--O-O-O--O-O--O|-O--O-O-O-OO--OO|--------O-------|&K=|-oo-o-o-oo-o-oo-|o-oo-o-o-o--oo--|o-o---o---------|')}}>C.A.N.C.E.R. 2</Paper>
                         </Grid>
                     </Grid>
                 </Box>
