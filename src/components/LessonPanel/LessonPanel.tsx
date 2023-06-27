@@ -105,8 +105,8 @@ export default function LessonPanel({ className, videoId }: { className?: string
             </AppBar>
             <TabPanel value={value} index={0}>
                 <Box display='flex' marginY={2} marginBottom={2} alignItems={'left'}>
-                    <Fab size='small' aria-label='new' sx={{ mr: 2 }} onClick={handlePopoverOpen}>
-                        <Add color='secondary' />
+                    <Fab color='secondary' size='small' aria-label='new' sx={{ mr: 2 }} onClick={handlePopoverOpen}>
+                        <Add />
                     </Fab>
                     <Popover
                         open={open}
