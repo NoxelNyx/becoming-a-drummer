@@ -70,7 +70,7 @@ export default function LoginCard() {
                     type="email"
                     autoComplete="current-password"
                     variant="filled"
-                    className="mt-2"
+                    sx={{ mt: 2 }}
                     color="secondary"
                     fullWidth
                     value={email}
@@ -81,15 +81,15 @@ export default function LoginCard() {
                     type="password"
                     autoComplete="current-email"
                     variant="filled"
-                    className="mt-2"
+                    sx={{ mt: 2 }}
                     color="secondary"
                     fullWidth
                     value={password}
                     onChange={handlePasswordChange}
                     onKeyDown={handleKeyPress} />
-                <Button variant="outlined" className="mt-4" color="secondary" fullWidth onClick={signIn}>Sign In</Button>
-                <Divider className="mt-2">OR</Divider>
-                <Button variant="outlined" className="mt-2" color="secondary" fullWidth onClick={signUp}>Register</Button>
+                <Button variant="outlined" sx={{ mt: 4 }} color="secondary" fullWidth onClick={signIn}>Sign In</Button>
+                <Divider sx={{ mt: 2 }}>OR</Divider>
+                <Button variant="outlined" sx={{ mt: 2 }} color="secondary" fullWidth onClick={signUp}>Register</Button>
             </CardContent>
         </Card>
     );
