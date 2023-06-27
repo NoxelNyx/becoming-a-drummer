@@ -38,7 +38,7 @@ function a11yProps(index: number) {
 
 export default function LessonPanel({ className, videoId }: { className?: string, videoId?: string }) {
     const [value, setValue] = React.useState(0);
-    const [gsUrl, setGsUrl] = React.useState('http://montulli.github.io/GrooveScribe/');
+    const [gsUrl, setGsUrl] = React.useState('https://montulli.github.io/GrooveScribe/');
     const [popoverAnchorEl, setPopoverAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [gsBookmarkTitle, setGsBookmarkTitle] = React.useState<string | null>(null);
     const [gsBookmarkUrl, setGsBookmarkUrl] = React.useState<string | null>(null);
@@ -105,7 +105,7 @@ export default function LessonPanel({ className, videoId }: { className?: string
             </AppBar>
             <TabPanel value={value} index={0}>
                 <Box display='flex' marginY={2} marginBottom={2} alignItems={'left'}>
-                    <Fab color='secondary' size='small' aria-label='new' sx={{ mr: 2 }} onClick={handlePopoverOpen}>
+                    <Fab size='small' aria-label='new' sx={{ mr: 2 }} onClick={handlePopoverOpen}>
                         <Add color='secondary' />
                     </Fab>
                     <Popover
