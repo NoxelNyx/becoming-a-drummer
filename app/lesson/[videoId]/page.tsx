@@ -32,7 +32,7 @@ export default function LessonPage({
     return (
         <Div sx={styles.root}>
             <VideoEmbed videoId={params.videoId} />
-            <LessonPanel className='mt-3 w-full' />
+            <LessonPanel videoId={params.videoId} className='mt-3 w-full' />
         </Div>
     );
 }

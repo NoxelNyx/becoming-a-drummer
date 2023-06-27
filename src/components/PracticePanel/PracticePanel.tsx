@@ -127,8 +127,8 @@ export default function PracticePanel() {
                                 variant="fullWidth"
                                 onChange={handleChange}>
                                 <Tab icon={<ViewList />} value="0" />
-                                <Tab icon={<History />} value="1" />
-                                <Tab icon={<Bookmark />} value="2" />
+                                <Tab icon={<Bookmark />} value="1" />
+                                <Tab icon={<History />} value="2" />
                             </TabList>
                         </AppBar>
                         <TabPanel value={value} index={0} sx={panelStyles.PracticeLog}>
@@ -136,10 +136,7 @@ export default function PracticePanel() {
                                 handleNewPracticeSessionOnClick={handleNewPracticeSessionOnClick}
                                 practiceSessions={practiceSessions} />
                         </TabPanel>
-                        <TabPanel value={value} index={1}>
-                            Tab 2
-                        </TabPanel>
-                        <TabPanel value={value} index={2} sx={panelStyles.Bookmarks}>
+                        <TabPanel value={value} index={1} sx={panelStyles.Bookmarks}>
                             { bookmarks.length === 0
                                 ? <div>No bookmarks</div>
                                 : bookmarks.map((bookmark) => {
@@ -154,6 +151,9 @@ export default function PracticePanel() {
                                         </div>
                                     );
                             })}
+                        </TabPanel>
+                        <TabPanel value={value} index={2}>
+                            Tab 3
                         </TabPanel>
                     </TabContext>
                 </Drawer>

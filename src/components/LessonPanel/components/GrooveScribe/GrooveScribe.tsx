@@ -2,10 +2,10 @@ import React from 'react';
 
 export default function GrooveScribe({ 
     className,
-    urlParams
+    url
 }: { 
     className?: string,
-    urlParams?: string
+    url?: string
 }) {
     return (<iframe
                 className={className}
@@ -13,5 +13,5 @@ export default function GrooveScribe({
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 title="GrooveScribe"
-                src={`https://montulli.github.io/GrooveScribe/?${urlParams}`} />);
+                src={url} />);
 };

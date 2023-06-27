@@ -5,6 +5,7 @@ import sharedReducer from './slice';
 import searchReducer from '@/src/components/Nav/components/SearchBar/slice';
 import practicePanelReducer from '@/src/components/PracticePanel/slice';
 import videoEmbedReducer from '@/src/components/VideoEmbed/slice';
+import lessonPanelReducer from '@/src/components/LessonPanel/slice';
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         search: searchReducer,
         practicePanel: practicePanelReducer,
         videoEmbed: videoEmbedReducer,
+        lessonPanel: lessonPanelReducer,
     },
 })
 
