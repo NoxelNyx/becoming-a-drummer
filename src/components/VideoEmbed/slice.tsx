@@ -71,9 +71,9 @@ export const videoEmbedSlice = createSlice({
                 return section;
             });
         },
-        deactivateSection: (state, action: PayloadAction<string>) => {
+        deactivateSections: (state) => {
             state.sections = state.sections.map((section) => {
-                if (section.id === action.payload)
+                if (section.active)
                     section.active = false;
 
                 return section;
@@ -107,7 +107,7 @@ export const selectVideoEmbedState = (state: AppState) => state.videoEmbed;
 
 export const {
     activateSection,
-    deactivateSection,
+    deactivateSections,
     addLocalSection,
     deleteLocalSection
 } = videoEmbedSlice.actions;

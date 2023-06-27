@@ -14,7 +14,7 @@ import {
 import {
     Section,
     selectVideoEmbedState,
-    addSectionAsync,
+    deactivateSections,
     addLocalSection,
     getSectionsAsync,
 } from './slice';
@@ -72,6 +72,10 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
         playerRef.current = e.target;
 
         dispatch(getSectionsAsync({ uid: user?.uid as string, videoId: videoId as string }));
+    };
+
+    const resetSections = () => {
+        dispatch(deactivateSections());
     };
 
     const onBookmarkClick = () => {
@@ -139,7 +143,9 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
                     videoId={videoId as string}
                     iframeClassName='mx-auto'
                     className='inline-block'
-                    onReady={onPlayerReady} />
+                    onReady={onPlayerReady}
+                    onPause={resetSections}
+                    onEnd={resetSections} />
                 <Box className='action-buttons align-top' display='inline-block' justifyContent='space-between' flexDirection='column'>
                     <Box>
                         <IconButton

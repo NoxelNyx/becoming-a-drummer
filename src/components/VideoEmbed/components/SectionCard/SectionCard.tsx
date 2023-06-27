@@ -1,4 +1,4 @@
-import { activateSection, deactivateSection, addSectionAsync, updateSectionAsync, deleteLocalSection, deleteSectionAsync } from '@/src/components/VideoEmbed/slice';
+import { activateSection, deactivateSections, addSectionAsync, updateSectionAsync, deleteLocalSection, deleteSectionAsync } from '@/src/components/VideoEmbed/slice';
 import { useAppDispatch } from '@/src/redux/hooks';
 import { Delete, Edit, Check } from '@mui/icons-material';
 import { Box, Card, CardActionArea, CardContent, IconButton, Input } from '@mui/material';
@@ -19,16 +19,12 @@ interface SectionCardProps {
 
 export default function SectionCard({ id, start, end, playerRef, active, playbackRate, videoId, index }: SectionCardProps) {
     let timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
+    let activeRef = React.useRef<boolean>(active);
     const [editEnabled, setEditEnabled] = React.useState(false);
     const [newStart, setNewStart] = React.useState(start);
     const [newEnd, setNewEnd] = React.useState(end);
     const dispatch = useAppDispatch();
     const user = useAuthContext();
-
-    const handleStateChange = (e: any) => {
-        if (e.data === 2 || e.data === 0)
-            clearTimeout(timeoutRef.current);
-    };
 
     const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -59,30 +55,56 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
             dispatch(deleteLocalSection(index));
     };
 
-    const handleClick = async () => {
+    const handleSpaceKey = React.useCallback((e: KeyboardEvent) => {
+        if (e.key === 'Space') {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (active)
+                dispatch(deactivateSections());
+            else
+                dispatch(activateSection(id));
+        }
+    }, [dispatch, id]); // eslint-disable-line
+
+    const handleStateChange = React.useCallback((e: any) => {
+        if (e.data === 2 || e.data === 0)
+            clearTimeout(timeoutRef.current);
+    }, []);
+
+    const setRepeat: any = React.useCallback(() => {
+        timeoutRef.current = setTimeout(async () => {
+            if (await playerRef.getPlayerState() === 1 && activeRef.current)
+                playerRef.seekTo(start, true);
+        }, ((end - start + 1) * 1000) / playbackRate);
+    }, [end, playbackRate, playerRef, start, activeRef]);
+
+    const handleClick = React.useCallback(() => {
         if (editEnabled) return;
 
+        window.removeEventListener('keydown', handleSpaceKey);
+        window.addEventListener('keydown', handleSpaceKey);
+
         if (active) {
-            dispatch(deactivateSection(id));
+            dispatch(deactivateSections());
+            activeRef.current = false;
 
             clearTimeout(timeoutRef.current);
             playerRef.removeEventListener('onStateChange', handleStateChange);
             playerRef.pauseVideo();
         } else {
             dispatch(activateSection(id));
+            activeRef.current = true;
 
             playerRef.removeEventListener('onStateChange', handleStateChange);
             playerRef.seekTo(start, true);
             playerRef.playVideo();
 
-            timeoutRef.current = setTimeout(async () => {
-                if (await playerRef.getPlayerState() === 1)
-                    handleClick();
-            }, ((end - start + 1) * 1000) / playbackRate);
+            setRepeat();
 
             playerRef.addEventListener('onStateChange', handleStateChange);
         }
-    };
+    }, [dispatch, editEnabled, handleSpaceKey, id, playerRef, start, handleStateChange, active, setRepeat]);
 
     return (
         <Box>
