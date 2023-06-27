@@ -6,10 +6,9 @@ const db = getFirestore(firebase_app);
 
 export async function fetchBookmarks(uid: string) {
     let bookmarksRef = collection(db, `users/${uid}/bookmarks`);
-    //let docSnap = await getDocs(bookmarksRef);
+    let docSnap = await getDocs(bookmarksRef);
 
-    return [{ videoId: 'ARCRORuhER8', title: 'Architects - "C.A.N.C.E.R"', duration: 260 }] as Bookmark[];
-    //return docSnap.docs.map(doc => { return { id: doc.id, ...doc.data() } });
+    return docSnap.docs.map(doc => { return { id: doc.id, ...doc.data() } });
 };
 
 export async function addBookmark(uid: string, bookmark: Bookmark) {
