@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
-import { Button, Typography, IconButton, Box, Grid, Card, Stack } from '@mui/material';
-import { Bookmark, BookmarkBorder } from '@mui/icons-material';
+import { Button, Typography, IconButton, Box, Stack } from '@mui/material';
+import { Bookmark, BookmarkBorder, FiberManualRecord, Pause } from '@mui/icons-material';
 import YouTube, { YouTubeEvent, YouTubePlayer } from 'react-youtube';
 import { useAppSelector, useAppDispatch } from '@/src/redux/hooks';
 import { useAuthContext } from '@/src/firebase/provider';
@@ -25,7 +25,8 @@ type VideoEmbedProps = {
 
 const styles = {
     bookmarkBtn: {
-        mb: 2
+        mb: 2,
+        mr: .1
     }
 };
 
@@ -33,6 +34,8 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
     let playerRef = React.useRef<any>(null);
     let bookmarkRef = React.useRef<BookmarkType | null>(null);
     const [playbackRate, setPlaybackRate] = useState<number>(1);
+    const [recording, setRecording] = useState<boolean>(false);
+    const [newSectionStartTime, setNewSectionStartTime] = useState<number>(0);
     const { bookmarks } = useAppSelector(selectPracticePanelState);
     const { sections } = useAppSelector(selectVideoEmbedState);
     const dispatch = useAppDispatch();
@@ -96,12 +99,19 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
     };
 
     const handleNewSectionClick = () => {
-        dispatch(addLocalSection({
-            start: playerRef.current.getCurrentTime(),
-            end: playerRef.current.getCurrentTime() + 10,
-            repeat: true,
-            active: false
-        }));
+        if (recording) {
+            setRecording(false);
+            dispatch(addLocalSection({
+                start: newSectionStartTime,
+                end: Math.floor(playerRef.current.getCurrentTime()),
+                repeat: true,
+                active: false,
+                defaultEdit: true
+            }));
+        } else {
+            setRecording(true);
+            setNewSectionStartTime(Math.floor(playerRef.current.getCurrentTime()));
+        }
     };
 
     return (
@@ -114,8 +124,14 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
                         borderRadius: '0',
                     }}
                     onClick={handleNewSectionClick}
-                    color="secondary"
-                    variant='outlined'>+</Button>
+                    color={recording ? 'error' : 'secondary'}
+                    variant='outlined'>
+                        {
+                            !recording
+                            ? <FiberManualRecord />
+                            : <Pause />
+                        }
+                </Button>
                 <Box overflow={'scroll'} maxHeight={425} sx={{ overflowX: 'visible' }} className='hide-scrollbar'>
                     <Stack spacing={2}>
                         {
@@ -130,7 +146,8 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
                                         active={section.active as boolean}
                                         playbackRate={playbackRate}
                                         index={index}
-                                        videoId={videoId} />
+                                        videoId={videoId}
+                                        defaultEdit={section.defaultEdit} />
                                 );
                             })
                         }

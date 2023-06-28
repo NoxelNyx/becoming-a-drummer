@@ -14,13 +14,14 @@ interface SectionCardProps {
     playerRef: YouTubePlayer,
     playbackRate: number,
     videoId: string,
-    index: number
+    index: number,
+    defaultEdit?: boolean
 };
 
-export default function SectionCard({ id, start, end, playerRef, active, playbackRate, videoId, index }: SectionCardProps) {
+export default function SectionCard({ id, start, end, playerRef, active, playbackRate, videoId, index, defaultEdit }: SectionCardProps) {
     let timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
     let activeRef = React.useRef<boolean>(active);
-    const [editEnabled, setEditEnabled] = React.useState(false);
+    const [editEnabled, setEditEnabled] = React.useState(defaultEdit || false);
     const [newStart, setNewStart] = React.useState(start);
     const [newEnd, setNewEnd] = React.useState(end);
     const dispatch = useAppDispatch();
@@ -74,8 +75,10 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
 
     const setRepeat: any = React.useCallback(() => {
         timeoutRef.current = setTimeout(async () => {
-            if (await playerRef.getPlayerState() === 1 && activeRef.current)
+            if (await playerRef.getPlayerState() === 1 && activeRef.current) {
                 playerRef.seekTo(start, true);
+                setRepeat();
+            }
         }, ((end - start + 1) * 1000) / playbackRate);
     }, [end, playbackRate, playerRef, start, activeRef]);
 

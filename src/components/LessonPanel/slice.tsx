@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { fetchGsBookmarks, addGsBookmark, deleteGsBookmark } from './api';
 import { AppState } from '@/src/redux/store';
 
@@ -7,6 +7,7 @@ export interface GsBookmark {
     url?: string,
     videoId?: string,
     title?: string,
+    active?: boolean,
 };
 
 export interface LessonPanelState {
@@ -42,6 +43,17 @@ export const lessonPanelSlice = createSlice({
     name: 'lessonPanel',
     initialState,
     reducers: {
+        setActive: (state, action: PayloadAction<string>) => {
+            state.gsBookmarks = state.gsBookmarks.map((gsBookmark) => {
+                if (gsBookmark.active)
+                    gsBookmark.active = false;
+                
+                if (gsBookmark.id === action.payload)
+                    gsBookmark.active = true;
+
+                return gsBookmark;
+            });
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(getGsBookmarksAsync.fulfilled, (state, action) => {
@@ -59,5 +71,7 @@ export const lessonPanelSlice = createSlice({
 });
 
 export const selectLessonPanelState = (state: AppState) => state.lessonPanel;
+
+export const { setActive } = lessonPanelSlice.actions;
 
 export default lessonPanelSlice.reducer;

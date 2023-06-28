@@ -9,7 +9,8 @@ export interface Section {
     repeat?: boolean,
     gsParams?: string,
     active?: boolean,
-    videoId?: string
+    videoId?: string,
+    defaultEdit?: boolean
 }
 
 export interface VideoEmbedState {

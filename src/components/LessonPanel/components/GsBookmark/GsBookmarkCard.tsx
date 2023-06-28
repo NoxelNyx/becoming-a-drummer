@@ -1,6 +1,6 @@
 import { Delete } from '@mui/icons-material';
 import { Card, CardActionArea, CardContent, Typography, Menu, MenuList, ListItemIcon, MenuItem } from '@mui/material';
-import { deleteGsBookmarkAsync } from '../../slice';
+import { deleteGsBookmarkAsync, setActive } from '../../slice';
 import { useAuthContext } from '@/src/firebase/provider';
 import { useAppDispatch } from '@/src/redux/hooks';
 import React from 'react';
@@ -9,10 +9,11 @@ interface GsBookmarkProps {
     id: string,
     url: string,
     title: string,
-    handleGsParamsChange: (url: string) => void
+    handleGsParamsChange: (url: string) => void,
+    active: boolean
 };
 
-export default function GsBookmarkCard({ id, url, title, handleGsParamsChange }: GsBookmarkProps) {
+export default function GsBookmarkCard({ id, url, title, active, handleGsParamsChange }: GsBookmarkProps) {
     const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const user = useAuthContext();
     const dispatch = useAppDispatch();
@@ -29,6 +30,7 @@ export default function GsBookmarkCard({ id, url, title, handleGsParamsChange }:
     };
 
     const handleOnClick = () => {
+        dispatch(setActive(id));
         handleGsParamsChange(url);
     };
 
@@ -42,7 +44,8 @@ export default function GsBookmarkCard({ id, url, title, handleGsParamsChange }:
             <Card
                 sx={{ height: 50, mr: 2 }}
                 onClick={handleOnClick}
-                onContextMenu={handleRightClick}>
+                onContextMenu={handleRightClick}
+                variant={active ? 'outlined' : 'elevation'}>
                 <CardActionArea>
                     <CardContent>
                         <Typography>{title}</Typography>
