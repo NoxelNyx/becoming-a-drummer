@@ -45,7 +45,7 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
         width: '853'
     };
 
-    const bookmarked = bookmarks.map((bookmark: BookmarkType) => {
+    const bookmarked = bookmarks.filter((bookmark: BookmarkType) => {
         if (bookmark.videoId === videoId) {
             bookmarkRef.current = bookmark;
 

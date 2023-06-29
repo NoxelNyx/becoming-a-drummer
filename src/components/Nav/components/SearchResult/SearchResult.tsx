@@ -18,7 +18,7 @@ type SearchResultProps = {
 const styles = {
     root: {
         marginTop: '1rem',
-        paddingBottom: 0,
+        paddingBottom: 3,
         cursor: 'pointer',
         "&:hover": {
             backgroundColor: '#000'
