@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { Drawer, Tab, AppBar, IconButton, Typography, Box } from '@mui/material';
+import { Drawer, Tab, AppBar, IconButton, Typography, Box, Stack } from '@mui/material';
 import { ViewList, History, Bookmark, ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
 import { TabContext, TabList } from '@mui/lab';
 import { selectPracticePanelState, newPracticeSession, getBookmarksAsync } from './slice';
@@ -129,20 +129,22 @@ export default function PracticePanel() {
                             </TabList>
                         </AppBar>
                         <TabPanel value={value} index={1} sx={panelStyles.Bookmarks}>
-                            { bookmarks.length === 0
-                                ? <div>No bookmarks</div>
-                                : bookmarks.map((bookmark) => {
-                                    return (
-                                        <div 
-                                            key={bookmark.videoId}
-                                            style={{ display: parseInt(value) === index ? 'none' : 'block', maxWidth: 320, maxHeight: 180 }}>
-                                            <Bookmarks
-                                                title={bookmark.title}
-                                                duration={bookmark.duration}
-                                                videoId={bookmark.videoId} />
-                                        </div>
-                                    );
-                            })}
+                            <Stack>
+                                { bookmarks.length === 0
+                                    ? <div>No bookmarks</div>
+                                    : bookmarks.map((bookmark) => {
+                                        return (
+                                            <Box 
+                                                key={bookmark.videoId}
+                                                sx={{ maxWidth: 320, maxHeight: 180, marginBottom: 2 }}>
+                                                <Bookmarks
+                                                    title={bookmark.title}
+                                                    duration={bookmark.duration}
+                                                    videoId={bookmark.videoId} />
+                                            </Box>
+                                        );
+                                })}
+                            </Stack>
                         </TabPanel>
                     </TabContext>
                 </Drawer>
