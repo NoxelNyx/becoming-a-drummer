@@ -94,7 +94,7 @@ export default function SearchContainer({ className }: { className?: string }) {
                 ref={popoverRef}
                 slotProps={{
                     paper: {
-                        style: { width: currentWidth, paddingTop: 14, paddingLeft: 8, paddingRight: 8, marginLeft: -8, marginTop: -30, maxHeight: 800 },
+                        style: { width: currentWidth + 16, paddingTop: 14, paddingLeft: 8, paddingRight: 8, marginLeft: -8, marginTop: -14, maxHeight: 800 },
                         className: 'hide-scrollbar'
                     }
                 }} >
@@ -106,7 +106,7 @@ export default function SearchContainer({ className }: { className?: string }) {
                     variant="outlined"
                     color="secondary"
                     size="small"
-                    sx={{ width: currentWidth - 16, position: 'fixed' }}
+                    sx={{ width: currentWidth, position: 'fixed' }}
                     value={query}
                     onChange={handleQueryChange}
                     onKeyUp={handleQueryKeyup}

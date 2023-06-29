@@ -1,11 +1,12 @@
 import React from 'react';
-import { Box, Tabs, Tab, Typography, AppBar, Fab, Popover, Input, Button } from '@mui/material';
+import { Box, Typography, Fab, Popover, TextField, Button } from '@mui/material';
 import GrooveScribe from './components/GrooveScribe';
-import { Add, Check } from '@mui/icons-material';
+import { Add } from '@mui/icons-material';
 import GsBookmarkCard from './components/GsBookmark';
 import { selectLessonPanelState, getGsBookmarksAsync, addGsBookmarkAsync } from './slice';
 import { useAppSelector, useAppDispatch } from '@/src/redux/hooks';
 import { useAuthContext } from '@/src/firebase/provider';
+import { baseGsUrl } from './components/GrooveScribe';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -37,16 +38,26 @@ function a11yProps(index: number) {
 }
 
 export default function LessonPanel({ className, videoId }: { className?: string, videoId?: string }) {
-    const [value, setValue] = React.useState(0);
-    const [gsUrl, setGsUrl] = React.useState('https://montulli.github.io/GrooveScribe/');
+    const [gsParams, setGsParams] = React.useState('');
     const [popoverAnchorEl, setPopoverAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [gsBookmarkTitle, setGsBookmarkTitle] = React.useState<string | null>(null);
-    const [gsBookmarkUrl, setGsBookmarkUrl] = React.useState<string | null>(null);
+    const [gsBookmarkParams, setGsBookmarkParams] = React.useState<string>('');
+    const titleInputRef = React.useRef<HTMLInputElement>(null);
     const { gsBookmarks } = useAppSelector(selectLessonPanelState);
     const dispatch = useAppDispatch();
     const user = useAuthContext();
 
     const handlePopoverOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        const callback = (event: MessageEvent) => {
+            setGsBookmarkParams(event.data);
+            window.removeEventListener('message', callback);
+        };
+
+        window.addEventListener('message', callback);
+
+        const gsIframe = document.getElementById('gs-iframe') as HTMLIFrameElement;
+        gsIframe.contentWindow?.postMessage('', baseGsUrl);
+
         setPopoverAnchorEl(event.currentTarget);
     };
 
@@ -54,29 +65,20 @@ export default function LessonPanel({ className, videoId }: { className?: string
         setPopoverAnchorEl(null);
     };
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-    };
-
-    const handleGsUrlChange = (url: string) => {
-        setGsUrl(url);
+    const handleGsParamsChange = (params: string) => {
+        setGsParams(params);
     };
 
     const handleNewGsBookmarkTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setGsBookmarkTitle(event.target.value);
     };
 
-    const handleNewGsBookmarkUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setGsBookmarkUrl(event.target.value);
-    };
-
     const handleSaveGsBookmark = () => {
         handlePopoverClose();
 
-        if (gsBookmarkTitle && gsBookmarkUrl) {
-            dispatch(addGsBookmarkAsync({ uid: user?.uid as string, newGsBookmark: { videoId: videoId, title: gsBookmarkTitle, url: gsBookmarkUrl } }));
+        if (gsBookmarkTitle) {
+            dispatch(addGsBookmarkAsync({ uid: user?.uid as string, newGsBookmark: { videoId: videoId, title: gsBookmarkTitle, params: gsBookmarkParams } }));
             setGsBookmarkTitle(null);
-            setGsBookmarkUrl(null);
         }
     };
 
@@ -108,19 +110,15 @@ export default function LessonPanel({ className, videoId }: { className?: string
                         elevation={8}>
                         <Box sx={{ p: 2 }}>
                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'left' }}>
-                                <Input
+                                <TextField
                                     size='small'
                                     placeholder='Title'
                                     color='secondary'
                                     value={gsBookmarkTitle}
-                                    onChange={handleNewGsBookmarkTitleChange} />
-                                <Input
-                                    sx={{ mt: 2 }}
-                                    size='small'
-                                    placeholder='Url'
-                                    color='secondary'
-                                    value={gsBookmarkUrl}
-                                    onChange={handleNewGsBookmarkUrlChange} />
+                                    onChange={handleNewGsBookmarkTitleChange}
+                                    ref={titleInputRef}
+                                    variant='standard'
+                                    autoFocus={true} />
                             </Box>
                             <Button sx={{ mt: 2 }} fullWidth color='secondary' variant='outlined' onClick={handleSaveGsBookmark}>Save</Button>
                         </Box>
@@ -131,14 +129,14 @@ export default function LessonPanel({ className, videoId }: { className?: string
                                 <GsBookmarkCard
                                     key={index}
                                     id={bookmark.id as string}
-                                    url={bookmark.url as string}
+                                    params={bookmark.params as string}
                                     title={bookmark.title as string}
                                     active={bookmark.active as boolean}
-                                    handleGsParamsChange={handleGsUrlChange} />
+                                    handleGsParamsChange={handleGsParamsChange} />
                             );
                         })
                     }
                 </Box>
-                <GrooveScribe className='w-full h-full' url={gsUrl} />
+                <GrooveScribe className='w-full h-full' params={gsParams} />
         </Box>);
 };

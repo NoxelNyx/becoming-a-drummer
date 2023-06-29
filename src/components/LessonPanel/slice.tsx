@@ -4,7 +4,7 @@ import { AppState } from '@/src/redux/store';
 
 export interface GsBookmark {
     id?: string,
-    url?: string,
+    params?: string,
     videoId?: string,
     title?: string,
     active?: boolean,
@@ -43,13 +43,13 @@ export const lessonPanelSlice = createSlice({
     name: 'lessonPanel',
     initialState,
     reducers: {
-        setActive: (state, action: PayloadAction<string>) => {
+        setActive: (state, action: PayloadAction<{ id: string, active: boolean}>) => {
             state.gsBookmarks = state.gsBookmarks.map((gsBookmark) => {
                 if (gsBookmark.active)
                     gsBookmark.active = false;
                 
-                if (gsBookmark.id === action.payload)
-                    gsBookmark.active = true;
+                if (gsBookmark.id === action.payload.id)
+                    gsBookmark.active = action.payload.active;
 
                 return gsBookmark;
             });

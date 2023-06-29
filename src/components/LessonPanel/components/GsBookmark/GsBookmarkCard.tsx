@@ -7,13 +7,13 @@ import React from 'react';
 
 interface GsBookmarkProps {
     id: string,
-    url: string,
+    params: string,
     title: string,
-    handleGsParamsChange: (url: string) => void,
+    handleGsParamsChange: (params: string) => void,
     active: boolean
 };
 
-export default function GsBookmarkCard({ id, url, title, active, handleGsParamsChange }: GsBookmarkProps) {
+export default function GsBookmarkCard({ id, params, title, active, handleGsParamsChange }: GsBookmarkProps) {
     const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
     const user = useAuthContext();
     const dispatch = useAppDispatch();
@@ -30,12 +30,18 @@ export default function GsBookmarkCard({ id, url, title, active, handleGsParamsC
     };
 
     const handleOnClick = () => {
-        dispatch(setActive(id));
-        handleGsParamsChange(url);
+        if (active) {
+            dispatch(setActive({ id, active: false }));
+            handleGsParamsChange('');
+        } else {
+            dispatch(setActive({ id, active: true }));
+            handleGsParamsChange(params);
+        }
     };
 
     const handleDeleteGsBookmark = () => {
         dispatch(deleteGsBookmarkAsync({ uid: user?.uid as string, gsBookmarkId: id as string }));
+        handleGsParamsChange('');
         handleContextClose();
     };
 
