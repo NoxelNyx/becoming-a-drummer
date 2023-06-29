@@ -22,6 +22,7 @@ const Nav: FC<NavProps> = ({ className }): ReactElement => {
     const [menuOpen, setMenuOpen] = React.useState(false);
     const [popoverAnchorEl, setPopoverAnchorEl] = React.useState<null | HTMLElement>(null);
     const [popoverOpen, setPopoverOpen] = React.useState(false);
+    const [apiKey, setApiKey] = React.useState(localStorage.getItem('yt_api_key') || '');
 
     const handleSignOut = () => {
         setMenuOpen(false);
@@ -30,10 +31,12 @@ const Nav: FC<NavProps> = ({ className }): ReactElement => {
     };
 
     const handlePopoverOpen = () => {
+        setPopoverOpen(true);
         setPopoverAnchorEl(menuAnchorEl);
     };
 
     const handlePopoverClose = () => {
+        setPopoverOpen(false);
         setPopoverAnchorEl(null);
     };
 
@@ -49,6 +52,7 @@ const Nav: FC<NavProps> = ({ className }): ReactElement => {
 
     const handleSetApiKey = (event: React.ChangeEvent<HTMLInputElement>) => {
         localStorage.setItem('yt_api_key', event.target.value);
+        setApiKey(event.target.value);
         handlePopoverClose();
     };
 
@@ -95,7 +99,8 @@ const Nav: FC<NavProps> = ({ className }): ReactElement => {
                                     <Input
                                         size='small'
                                         color='secondary'
-                                        onChange={handleSetApiKey} />
+                                        onChange={handleSetApiKey}
+                                        value={apiKey} />
                                 </Box>
                             </Box>
                         </Popover>
