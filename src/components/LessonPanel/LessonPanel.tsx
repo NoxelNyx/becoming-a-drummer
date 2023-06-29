@@ -88,22 +88,6 @@ export default function LessonPanel({ className, videoId }: { className?: string
 
     return (
         <Box sx={{ width: '100%', height: 580, bgcolor: 'background.paper' }} className={className}>
-            <AppBar position="static">
-                <Tabs
-                    textColor='inherit'
-                    indicatorColor='secondary'
-                    variant="fullWidth"
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="lesson panel tabs"
-                    className='h-full'
-                    sx={{ borderRight: 1, borderColor: 'divider' }} >
-                    <Tab label="GrooveScribe" {...a11yProps(0)} />
-                    <Tab label="Notes" {...a11yProps(1)} />
-                    <Tab label="Comments" {...a11yProps(2)} />
-                </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0}>
                 <Box display='flex' marginY={2} marginBottom={2} alignItems={'left'}>
                     <Fab color='secondary' size='small' aria-label='new' sx={{ mr: 2 }} onClick={handlePopoverOpen}>
                         <Add />
@@ -156,12 +140,5 @@ export default function LessonPanel({ className, videoId }: { className?: string
                     }
                 </Box>
                 <GrooveScribe className='w-full h-full' url={gsUrl} />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                Item Two
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                Item Three
-            </TabPanel>
         </Box>);
 };

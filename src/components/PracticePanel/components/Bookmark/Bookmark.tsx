@@ -14,7 +14,7 @@ const Bookmark: FC<BookmarkProps> = ({ videoId, title, duration }) => {
     return (<React.Fragment>
                <Card sx={{ maxHeight: 180 }}>
                     <Link href={`/lesson/${videoId}`}>
-                        <Thumbnail url={`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`} title={title} duration={duration} height='100%' width='100%' />
+                        <Thumbnail url={`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`} description='' duration={duration} height='100%' width='100%' />
                     </Link>
                </Card>
             </React.Fragment>);

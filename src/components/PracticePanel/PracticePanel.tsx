@@ -78,7 +78,7 @@ export default function PracticePanel() {
                 role="tabpanel"
                 hidden={parseInt(value) !== index}
                 {...other}>
-                <Box>{children}</Box>
+                <Box justifyContent={'center'} alignItems={'center'} display={'flex'}>{children}</Box>
             </Typography>
         );
     }
@@ -108,7 +108,6 @@ export default function PracticePanel() {
             {user != null &&
                 <Drawer
                     sx={{
-                        width: '15%',
                         flexShrink: 0,
                         '& .MuiDrawer-paper': {
                             width: '15%',
@@ -126,16 +125,9 @@ export default function PracticePanel() {
                                 textColor="inherit"
                                 variant="fullWidth"
                                 onChange={handleChange}>
-                                <Tab icon={<ViewList />} value="0" />
                                 <Tab icon={<Bookmark />} value="1" />
-                                <Tab icon={<History />} value="2" />
                             </TabList>
                         </AppBar>
-                        <TabPanel value={value} index={0} sx={panelStyles.PracticeLog}>
-                            <PracticeLog
-                                handleNewPracticeSessionOnClick={handleNewPracticeSessionOnClick}
-                                practiceSessions={practiceSessions} />
-                        </TabPanel>
                         <TabPanel value={value} index={1} sx={panelStyles.Bookmarks}>
                             { bookmarks.length === 0
                                 ? <div>No bookmarks</div>
@@ -143,7 +135,7 @@ export default function PracticePanel() {
                                     return (
                                         <div 
                                             key={bookmark.videoId}
-                                            style={{ display: parseInt(value) === index ? 'none' : 'block'}}>
+                                            style={{ display: parseInt(value) === index ? 'none' : 'block', maxWidth: 320, maxHeight: 180 }}>
                                             <Bookmarks
                                                 title={bookmark.title}
                                                 duration={bookmark.duration}
@@ -151,9 +143,6 @@ export default function PracticePanel() {
                                         </div>
                                     );
                             })}
-                        </TabPanel>
-                        <TabPanel value={value} index={2}>
-                            Tab 3
                         </TabPanel>
                     </TabContext>
                 </Drawer>
