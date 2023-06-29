@@ -3,6 +3,7 @@
 import './globals.css'
 import React from 'react'
 import { Inter } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
 import { ProviderWrapper } from '@/src/redux/provider';
 import { createTheme, Theme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
 import { Container, Grid } from '@mui/material';
@@ -57,6 +58,7 @@ export default function RootLayout({
                         </ProviderWrapper>
                     </ThemeProvider>
                 </AuthContextProvider>
+                <Analytics />
             </body>
         </html>
     )
