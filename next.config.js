@@ -9,7 +9,7 @@ const nextConfig = {
         ]
     },
     env: {
-        NEXT_PUBLIC_YT_API_Key: process.env.NEXT_PUBLIC_YT_API_KEY
+        NEXT_PUBLIC_YT_API_KEY: process.env.NEXT_PUBLIC_YT_API_KEY
     }
 };
 
