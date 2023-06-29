@@ -7,6 +7,9 @@ const nextConfig = {
                 hostname: 'i.ytimg.com'
             }
         ]
+    },
+    env: {
+        NEXT_PUBLIC_YT_API_Key: process.env.NEXT_PUBLIC_YT_API_KEY
     }
 };
 
