@@ -1,5 +1,5 @@
 import React, { FC, ReactElement } from 'react';
-import { Grid, Paper } from '@mui/material';
+import { Card, Box, CardActionArea, Typography, CardContent, CardMedia } from '@mui/material';
 import { setCurrentVideoId } from '@/src/redux/slice';
 import { setQuery } from '@/src/components/Nav/components/SearchBar/slice';
 import { useAppDispatch } from '@/src/redux/hooks';
@@ -18,11 +18,14 @@ type SearchResultProps = {
 const styles = {
     root: {
         marginTop: '1rem',
-        marginBottom: '2rem',
+        paddingBottom: 0,
         cursor: 'pointer',
         "&:hover": {
             backgroundColor: '#000'
-        }
+        },
+        display: 'flex',
+        height: 'auto',
+        width: 200
     }
 }
 
@@ -35,31 +38,20 @@ const SearchResult: FC<SearchResultProps> = ({ videoId, url, title, description,
     };
 
     return (
-        <Link href={'/lesson/' + videoId}>
-            <Paper sx={styles.root} square onClick={handleClick}>
-                <Grid container justifyContent="flex-start">
-                    <Grid item className="mr-1">
-                        <Thumbnail url={url} title={title} duration={duration} />
-                    </Grid>
-                    <Grid item xs={12} sm container className="mt-1">
-                        <Grid item xs container direction="column">
-                            <Grid item xs>
-                                <h2 className="mt-0">{title}</h2>
-                                {description}
-                            </Grid>
-                            <Grid item>
-                                
-                            </Grid>
-                            <Grid item>
-                                
-                            </Grid>
-                        </Grid>
-                        <Grid item>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Paper>
-        </Link>
+        <Box marginRight={3}>
+            <Link href={'/lesson/' + videoId}>
+                <Card sx={styles.root} onClick={handleClick} elevation={8}>
+                    <CardActionArea>
+                        <CardMedia>
+                            <Thumbnail url={url} description={description} duration={duration} />
+                        </CardMedia>
+                        <CardContent>
+                            {title}
+                            </CardContent>
+                    </CardActionArea>
+                </Card>
+            </Link>
+        </Box>
     )
 }
 

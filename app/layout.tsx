@@ -1,6 +1,7 @@
 'use client'
 
 import './globals.css'
+import React from 'react'
 import { Inter } from 'next/font/google';
 import { ProviderWrapper } from '@/src/redux/provider';
 import { createTheme, Theme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
@@ -10,6 +11,7 @@ import Nav from '@/src/components/Nav';
 import PracticePanel from '@/src/components/PracticePanel';
 import { AuthContextProvider } from '@/src/firebase/provider';
 import { usePathname } from 'next/navigation';
+import NextNProgress from 'next-nprogress-bar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -31,6 +33,12 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={inter.className}>
+                <NextNProgress
+                    height="4px"
+                    color={theme.palette.secondary.dark}
+                    options={{ showSpinner: false }}
+                    shallowRouting
+                    appDirectory />
                 <AuthContextProvider>
                     <ThemeProvider theme={theme}>
                         <CssBaseline />

@@ -3,6 +3,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '@/src/redux/store';
 import { searchGoogle, getContentDetails } from './api';
+import moment from 'moment';
 
 export interface GoogleVideo {
     id: object,
@@ -11,13 +12,13 @@ export interface GoogleVideo {
 };
 
 export interface SearchState {
-    query?: string | null,
-    videos: [GoogleVideo]
+    query?: string,
+    videos: GoogleVideo[]
 };
 
 const initialState: SearchState = {
     query: '',
-    videos: [{
+    videos: [] as GoogleVideo[]/*{
         id: {
             videoId: 'woI6t8dCQcQ'
         },
@@ -31,19 +32,18 @@ const initialState: SearchState = {
             }
         },
         contentDetails: {
-            duration: 'PT15M33S'
+            duration: 933
         }
-    }]
+    }*/
 };
 
 export const searchExternalAsync = createAsyncThunk(
     'search/searchExternal',
     async (query: string) => {
-        //let data = await searchGoogle(query);
-        //const videoIds = data.items.map((item: any) => { return item.id.videoId });
-        //const contentDetails = await getContentDetails(videoIds);
-        //const videosWithContentDetails: any = await addContentDetails(data, contentDetails);
-        const videosWithContentDetails: any = initialState.videos
+        let data = await searchGoogle(query);
+        const videoIds = data.items.map((item: any) => { return item.id.videoId });
+        const contentDetails = await getContentDetails(videoIds);
+        const videosWithContentDetails: any = await addContentDetails(data, contentDetails);
 
         return videosWithContentDetails;
     }
@@ -84,7 +84,7 @@ async function addContentDetails(videos: any, contentDetails: any) {
 
         data.push({
             contentDetails: {
-                duration: relevantDetails.contentDetails.duration
+                duration: moment.duration(relevantDetails.contentDetails.duration).asSeconds()
             },
             ...video
         })

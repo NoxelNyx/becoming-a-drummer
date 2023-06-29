@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 type ThumbnailProps = {
     url: string,
-    title: string,
+    description: string,
     duration: number,
     height?: number | string,
     width?: number | string
@@ -23,25 +23,20 @@ const styles = {
         paddingTop: .5,
         paddingBottom: .5,
         borderRadius: .5
-    },
-    thumbnail: {
-        height: 180,
-        width: 320
     }
 };
 
-const Div = styled('div')(styles);
 const Span = styled('span')(styles);
 
-const Thumbnail: FC<ThumbnailProps> = ({ url, title, duration, height, width }): ReactElement => {
+const Thumbnail: FC<ThumbnailProps> = ({ url, description, duration, height, width }): ReactElement => {
     const format = duration < 3600 ? 'mm:ss' : 'H:mm:ss';
     const durationMoment = moment.utc(duration * 1000).format(format);
 
     return (
-        <Div>
-            <Image src={url} height={180} width={345} alt={title} />
+        <React.Fragment>
+            <Image src={url} height={180} width={320} alt={description} />
             <Span sx={styles.videoDuration}>{durationMoment}</Span>
-        </Div>
+        </React.Fragment>
     );
 };
 

@@ -1,6 +1,7 @@
 import React, { FC, ReactElement } from 'react'
 import Image from 'next/image'
 import logo from './logo-no-bg.png'
+import { Box } from '@mui/material';
 
 import './Logo.css';
 
@@ -13,10 +14,10 @@ type LogoProps = {
 }
 
 const Logo: FC<LogoProps> = ({ className, children, handleOnClick, sizes, height }): ReactElement => {
-    className += ' logo';
+    className = className ? `${className} logo` : 'logo';
 
     return (
-        <div className="logo-container">
+        <Box justifyContent={'center'} alignItems={'center'} display={'flex'}>   
             <Image
                 src={logo}
                 className={className}
@@ -24,8 +25,8 @@ const Logo: FC<LogoProps> = ({ className, children, handleOnClick, sizes, height
                 height={height}
                 onClick={handleOnClick}
                 alt="logo" />
-            {children}
-        </div>
+                {children}
+        </Box>
     )
 };
 

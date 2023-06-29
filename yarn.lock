@@ -3270,6 +3270,13 @@ negotiator@0.6.3:
   resolved "https://registry.npmjs.org/negotiator/-/negotiator-0.6.3.tgz"
   integrity sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==
 
+next-nprogress-bar@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/next-nprogress-bar/-/next-nprogress-bar-1.2.5.tgz#f9bb65a218252b53e14303bd6d2ba15db409d6b9"
+  integrity sha512-4RWXRss28QS7/lRgrMZqUxDJdgAuWR2KL13dBOBaHyxiFUaNXjWRNZbJDkMa/5NCHSadsQD/49bHpSfjGlTVcQ==
+  dependencies:
+    nprogress "^0.2.0"
+
 next@13.4.6:
   version "13.4.6"
   resolved "https://registry.npmjs.org/next/-/next-13.4.6.tgz"
@@ -3346,6 +3353,11 @@ npm-run-path@^5.1.0:
   integrity sha512-sJOdmRGrY2sjNTRMbSvluQqg+8X7ZK61yvzBEIDhz4f8z1TZFYABsqjjCBd/0PUNE9M6QDgHJXQkGUEm7Q+l9Q==
   dependencies:
     path-key "^4.0.0"
+
+nprogress@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/nprogress/-/nprogress-0.2.0.tgz#cb8f34c53213d895723fcbab907e9422adbcafb1"
+  integrity sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==
 
 object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.1:
   version "4.1.1"

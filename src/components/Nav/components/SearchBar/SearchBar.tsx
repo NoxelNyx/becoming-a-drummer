@@ -1,27 +1,71 @@
 import React from 'react';
-import { TextField } from '@mui/material';
+import { TextField, Popover, Typography, Box, Divider, IconButton, Chip, InputAdornment, Input } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { searchExternalAsync, selectSearchState, setQuery } from './slice';
-import { useRouter, usePathname } from 'next/navigation';
+import SearchResult from '../SearchResult';
 
-export default function SearchContainer({ className }: { className?: string}) {
-    const { query } = useAppSelector(selectSearchState);
+export default function SearchContainer({ className }: { className?: string }) {
+    const [popoverAnchorEl, setPopoverAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [popoverOpen, setPopoverOpen] = React.useState(false);
+    const [currentWidth, setCurrentWidth] = React.useState(0);
+    const { query, videos } = useAppSelector(selectSearchState);
+    const popoverRef = React.useRef<HTMLDivElement | null>(null);
     const dispatch = useAppDispatch();
-    const router = useRouter();
-    const pathname = usePathname();
 
-    const handleFieldChange = (e: React.ChangeEvent<{ value: string }>) => {
-        const value = e.target.value;
+    const handleQueryKeyup = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            dispatch(searchExternalAsync(query as string));
 
-        if (value.length > 3) {
-            dispatch(searchExternalAsync(value)).then(() => {
-                if (pathname !== '/search')
-                    router.push('/search');
-            });
+            handlePopoverOpen();
         }
-
-        dispatch(setQuery(value));
     };
+
+    const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(setQuery(e.target.value));
+    };
+
+    const handlePopoverOpen = () => {
+        const el = popoverRef.current?.children[2];
+        el?.scrollTo({ left: 0, behavior: "auto" });
+        setPopoverOpen(true);
+    };
+
+    const handlePopoverClose = () => {
+        dispatch(setQuery(''));
+        setPopoverOpen(false);
+        setPopoverAnchorEl(null);
+    };
+
+    const handleFocus = (e: React.FocusEvent) => {
+        setCurrentWidth(e.target.clientWidth);
+        setPopoverAnchorEl(e.target.parentNode?.parentElement?.parentElement as HTMLElement); //lol
+    };
+
+    React.useEffect(() => {
+        const el = popoverRef.current?.children[2];
+
+        if (el) {
+            const onWheel = (e: any) => {
+                if (e.deltaY == 0) return;
+
+                e.preventDefault();
+                if (e.deltaY < 0)
+                    el.scrollTo({
+                        left: el.scrollLeft + e.deltaY - 100,
+                        behavior: "auto"
+                    });
+                else
+                    el.scrollTo({
+                        left: el.scrollLeft + e.deltaY + 100,
+                        behavior: "auto"
+                    });
+            };
+
+            el.addEventListener("wheel", onWheel);
+
+            return () => el.removeEventListener("wheel", onWheel);
+        }
+    }, [videos]);
 
     return (
         <div className={className + " search-bar text-center w-full"}>
@@ -34,8 +78,57 @@ export default function SearchContainer({ className }: { className?: string}) {
                 color="secondary"
                 size="small"
                 value={query}
-                onChange={handleFieldChange}
-            />
+                hidden={popoverOpen}
+                onKeyUp={handleQueryKeyup}
+                onChange={handleQueryChange}
+                onFocus={handleFocus} />
+            <Popover
+                open={popoverOpen}
+                anchorEl={popoverAnchorEl}
+                onClose={handlePopoverClose}
+                transformOrigin={{ horizontal: 'center', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+                color='secondary'
+                elevation={7}
+                marginThreshold={-2}
+                ref={popoverRef}
+                slotProps={{
+                    paper: {
+                        style: { width: currentWidth, paddingTop: 14, paddingLeft: 8, paddingRight: 8, marginLeft: -8, marginTop: -30, maxHeight: 800 },
+                        className: 'hide-scrollbar'
+                    }
+                }} >
+                <TextField
+                    id="lesson-search"
+                    fullWidth
+                    label="Search Lessons"
+                    type="search"
+                    variant="outlined"
+                    color="secondary"
+                    size="small"
+                    sx={{ width: currentWidth - 16, position: 'fixed' }}
+                    value={query}
+                    onChange={handleQueryChange}
+                    onKeyUp={handleQueryKeyup}
+                    autoFocus />
+                {(videos.length > 0) &&
+                    <Box padding={3} marginTop={3}>
+                        <Typography variant="h4">Results</Typography>
+                        <Divider />
+                        <Box display={'flex'}>
+                            {videos.map((video: any) =>
+                                <SearchResult
+                                    key={video.id.videoId}
+                                    videoId={video.id.videoId}
+                                    duration={video.contentDetails.duration}
+                                    url={video.snippet.thumbnails.medium.url}
+                                    title={video.snippet.title}
+                                    description={video.snippet.description} />
+                            )}
+                        </Box>
+                    </Box>
+                }
+            </Popover>
         </div>
     );
 };
