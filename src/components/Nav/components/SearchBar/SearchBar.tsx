@@ -25,9 +25,10 @@ export default function SearchContainer({ className }: { className?: string }) {
     };
 
     const handlePopoverOpen = () => {
+        setPopoverOpen(true);
+
         const el = popoverRef.current?.children[2];
         el?.scrollTo({ left: 0, behavior: "auto" });
-        setPopoverOpen(true);
     };
 
     const handlePopoverClose = () => {
