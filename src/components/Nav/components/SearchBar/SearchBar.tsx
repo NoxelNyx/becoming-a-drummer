@@ -112,10 +112,10 @@ export default function SearchContainer({ className }: { className?: string }) {
                     onChange={handleQueryChange}
                     onKeyUp={handleQueryKeyup}
                     autoFocus />
-                {(videos.length > 0) &&
-                    <Box padding={3} marginTop={3}>
-                        <Typography variant="h4">Results</Typography>
-                        <Divider />
+                <Box padding={3} marginTop={3}>
+                    <Typography variant="h4">Results</Typography>
+                    <Divider />
+                    {(videos.length > 0) &&
                         <Box display={'flex'}>
                             {videos.map((video: any) =>
                                 <SearchResult
@@ -127,8 +127,8 @@ export default function SearchContainer({ className }: { className?: string }) {
                                     description={video.snippet.description} />
                             )}
                         </Box>
-                    </Box>
-                }
+                    }
+                </Box>
             </Popover>
         </div>
     );
