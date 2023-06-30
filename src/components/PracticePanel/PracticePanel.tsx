@@ -140,7 +140,8 @@ export default function PracticePanel() {
                                                 <Bookmarks
                                                     title={bookmark.title}
                                                     duration={bookmark.duration}
-                                                    videoId={bookmark.videoId} />
+                                                    videoId={bookmark.videoId}
+                                                    toggleDrawer={handleToggleDrawer} />
                                             </Box>
                                         );
                                 })}
