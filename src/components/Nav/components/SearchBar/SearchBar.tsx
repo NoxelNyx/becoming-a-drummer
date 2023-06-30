@@ -124,7 +124,8 @@ export default function SearchContainer({ className }: { className?: string }) {
                                     duration={video.contentDetails.duration}
                                     url={video.snippet.thumbnails.medium.url}
                                     title={video.snippet.title}
-                                    description={video.snippet.description} />
+                                    description={video.snippet.description}
+                                    handlePopoverClose={handlePopoverClose} />
                             )}
                         </Box>
                     }

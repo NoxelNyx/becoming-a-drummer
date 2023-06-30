@@ -12,7 +12,8 @@ type SearchResultProps = {
     title: string,
     description: string,
     duration: number,
-    videoId: string
+    videoId: string,
+    handlePopoverClose: () => void
 }
 
 const styles = {
@@ -29,10 +30,11 @@ const styles = {
     }
 }
 
-const SearchResult: FC<SearchResultProps> = ({ videoId, url, title, description, duration }): ReactElement => {
+const SearchResult: FC<SearchResultProps> = ({ videoId, url, title, description, duration, handlePopoverClose }): ReactElement => {
     const dispatch = useAppDispatch();
 
     const handleClick = () => {
+        handlePopoverClose();
         dispatch(setCurrentVideoId(videoId));
         dispatch(setQuery(''));
     };
