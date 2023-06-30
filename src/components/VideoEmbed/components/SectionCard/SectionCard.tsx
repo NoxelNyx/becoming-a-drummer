@@ -42,8 +42,8 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
         if (id)
             dispatch(updateSectionAsync({ uid: user?.uid as string, section: { id, start: newStart, end: newEnd, videoId } }));
         else {
-            dispatch(deleteLocalSection(index));
             dispatch(addSectionAsync({ uid: user?.uid as string, newSection: { start: newStart, end: newEnd, active: false, videoId } }));
+            dispatch(deleteLocalSection(index));
         }
     };
 
