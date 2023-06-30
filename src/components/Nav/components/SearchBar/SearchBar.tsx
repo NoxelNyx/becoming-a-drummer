@@ -71,9 +71,9 @@ export default function SearchContainer({ className }: { className?: string }) {
     return (
         <div className={className + " search-bar text-center w-full"}>
             <TextField
-                id="lesson-search"
+                id="video-search"
                 fullWidth
-                label="Search Lessons"
+                label="Search Videos"
                 type="search"
                 variant="outlined"
                 color="secondary"
@@ -100,9 +100,9 @@ export default function SearchContainer({ className }: { className?: string }) {
                     }
                 }} >
                 <TextField
-                    id="lesson-search"
+                    id="video-search-popover"
                     fullWidth
-                    label="Search Lessons"
+                    label="Search Videos"
                     type="search"
                     variant="outlined"
                     color="secondary"

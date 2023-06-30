@@ -16,7 +16,7 @@ const styles = {
 
 const Div = styled('div')(styles);
 
-export default function LessonPage({
+export default function VideoPage({
     params 
 }: {
     params: { videoId: string }

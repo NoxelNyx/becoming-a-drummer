@@ -41,7 +41,7 @@ const SearchResult: FC<SearchResultProps> = ({ videoId, url, title, description,
 
     return (
         <Box marginRight={3}>
-            <Link href={'/lesson/' + videoId}>
+            <Link href={'/video/' + videoId}>
                 <Card sx={styles.root} onClick={handleClick} elevation={8}>
                     <CardActionArea>
                         <CardMedia>
