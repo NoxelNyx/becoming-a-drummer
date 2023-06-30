@@ -37,8 +37,6 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
         e.stopPropagation();
         setEditEnabled(false);
 
-        if (start === newStart && end === newEnd) return;
-
         if (id)
             dispatch(updateSectionAsync({ uid: user?.uid as string, section: { id, start: newStart, end: newEnd, videoId } }));
         else {
