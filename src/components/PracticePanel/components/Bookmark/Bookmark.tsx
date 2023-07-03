@@ -15,8 +15,8 @@ const Bookmark: FC<BookmarkProps> = ({ videoId, title, duration, toggleDrawer })
     return (<React.Fragment>
         <Card sx={{ maxHeight: 180 }}>
             <CardActionArea>
-                <Link href={`/video/${videoId}`} onClick={toggleDrawer}>
-                    <Thumbnail url={`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`} description='' duration={duration} height='100%' width='100%' />
+                <Link href={`/video/${videoId}`} onClick={toggleDrawer} style={{ display: 'flex' }}>
+                    <Thumbnail url={`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`} description={title} duration={duration} height='100%' width='100%' />
                 </Link>
             </CardActionArea>
         </Card>
