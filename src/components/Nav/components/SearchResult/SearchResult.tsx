@@ -19,7 +19,6 @@ type SearchResultProps = {
 const styles = {
     root: {
         marginTop: '1rem',
-        paddingBottom: 3,
         cursor: 'pointer',
         "&:hover": {
             backgroundColor: '#000'
@@ -42,7 +41,7 @@ const SearchResult: FC<SearchResultProps> = ({ videoId, url, title, description,
     return (
         <Box marginRight={3}>
             <Link href={'/video/' + videoId}>
-                <Card sx={styles.root} onClick={handleClick} elevation={8}>
+                <Card sx={styles.root} onClick={handleClick} elevation={6}>
                     <CardActionArea>
                         <CardMedia>
                             <Thumbnail url={url} description={description} duration={duration} />
