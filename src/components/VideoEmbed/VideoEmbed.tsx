@@ -18,6 +18,7 @@ import {
     addLocalSection,
     getSectionsAsync,
 } from './slice';
+import { setCurrentVideoTitle, selectSharedState } from '@/src/redux/slice';
 
 type VideoEmbedProps = {
     videoId: string
@@ -38,6 +39,7 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
     const [newSectionStartTime, setNewSectionStartTime] = useState<number>(0);
     const { bookmarks } = useAppSelector(selectPracticePanelState);
     const { sections } = useAppSelector(selectVideoEmbedState);
+    const { currentVideoTitle } = useAppSelector(selectSharedState);
     const dispatch = useAppDispatch();
     const user = useAuthContext();
     const options = {
@@ -75,6 +77,7 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
         playerRef.current = e.target;
 
         dispatch(getSectionsAsync({ uid: user?.uid as string, videoId: videoId as string }));
+        dispatch(setCurrentVideoTitle(playerRef.current.getVideoData().title));
     };
 
     const resetSections = () => {
@@ -154,7 +157,7 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
                     </Stack>
                 </Box>
             </Box>
-            <Box className="video-container" display='inline-block' sx={{ mr: '10rem' }}>
+            <Box className="video-container" display='inline-block'>
                 <YouTube
                     opts={options}
                     videoId={videoId as string}

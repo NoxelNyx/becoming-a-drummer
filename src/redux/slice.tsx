@@ -5,12 +5,12 @@ import { YouTubePlayer } from 'react-youtube';
 
 export interface SharedState {
     currentVideoId?: string,
-    currentPlayer?: any
+    currentVideoTitle?: string
 };
 
 export const initialState: SharedState = {
     currentVideoId: undefined,
-    currentPlayer: undefined
+    currentVideoTitle: undefined
 };
 
 export const sharedSlice = createSlice({
@@ -19,6 +19,9 @@ export const sharedSlice = createSlice({
     reducers: {
         setCurrentVideoId: (state, action: PayloadAction<string>) => {
             state.currentVideoId = action.payload;
+        },
+        setCurrentVideoTitle: (state, action: PayloadAction<string>) => {
+            state.currentVideoTitle = action.payload;
         }
     }
 });
@@ -26,7 +29,8 @@ export const sharedSlice = createSlice({
 export const selectSharedState = (state: AppState) => state.shared;
 
 export const {
-    setCurrentVideoId
+    setCurrentVideoId,
+    setCurrentVideoTitle
 } = sharedSlice.actions;
 
 export default sharedSlice.reducer;

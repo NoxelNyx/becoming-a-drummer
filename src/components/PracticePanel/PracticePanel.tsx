@@ -92,7 +92,7 @@ export default function PracticePanel() {
             top: '50%',
             transform: 'translateY(-50%)',
             zIndex: 'modal',
-            right: "15%",
+            right: 375,
             backgroundColor: 'rgba(206, 147, 216, 0.08)'
         }
     };
@@ -146,7 +146,7 @@ export default function PracticePanel() {
                     sx={{
                         flexShrink: 0,
                         '& .MuiDrawer-paper': {
-                            width: '15%',
+                            width: 375,
                             boxSizing: 'border-box',
                             padding: '1rem'
                         },
@@ -198,7 +198,7 @@ export default function PracticePanel() {
                                         filteredCommunityContent.map((content, index) => {
                                             return (
                                                 <Box key={index} marginTop={3} width={'100%'}>
-                                                    <CommunityContent title={content.title} videoTitle={content.videoTitle} videoId={content.videoId as string} description={content.description} params={content.params} />
+                                                    <CommunityContent title={content.title} videoTitle={content.videoTitle} videoId={content.videoId as string} description={content.description} params={content.params} keywords={content.keywords} />
                                                 </Box>);
                                         })
                                     }

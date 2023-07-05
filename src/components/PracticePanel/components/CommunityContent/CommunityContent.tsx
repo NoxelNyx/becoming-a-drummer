@@ -1,11 +1,22 @@
 import React from 'react';
-import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, CardMedia, Typography, CardHeader, Divider, Chip } from '@mui/material';
 import { useAppDispatch } from '@/src/redux/hooks';
 import { addGsBookmarkAsync } from '@/src/components/LessonPanel/slice';
 import { useAuthContext } from '@/src/firebase/provider';
 import { useRouter } from 'next/navigation';
+import filters from '@/src/components/FilterBar/filters.json';
 
-export default function CommunityContent({ title, videoTitle, description, videoId, params }: { title: string, videoTitle: string, description: string, videoId: string, params: string}) {
+type CommunityContent = {
+    title: string,
+    videoTitle: string,
+    description: string,
+    videoId: string,
+    params: string,
+    keywords: string[]
+};
+
+
+export default function CommunityContent({ title, videoTitle, description, videoId, params, keywords }: CommunityContent) {
     const user = useAuthContext();
     const router = useRouter();
     const dispatch = useAppDispatch();
@@ -17,23 +28,34 @@ export default function CommunityContent({ title, videoTitle, description, video
 
     return (
         <Card sx={{ display: 'flex' }}>
-            <CardActionArea sx={{ display: 'flex', justifyContent: 'flex-start' }} onClick={handleClick}>
-                <CardMedia
-                    component="img"
-                    sx={{ width: 100, height: '100%' }}
-                    image={`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`}
-                    alt={title} />
+            <CardActionArea onClick={handleClick}>
+                <CardHeader
+                    title={videoTitle}
+                    avatar={
+                        <CardMedia
+                            component="img"
+                            sx={{ width: 100, height: '100%', display: 'inline-flex' }}
+                            image={`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`}
+                            alt={title} />
+                    } />
+                <Divider />
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <CardContent>
-                        <Typography variant="subtitle2" color="text.secondary" component="div">
-                            {videoTitle}
-                        </Typography>
-                        <Typography component="div" marginTop={2}>
+                        <Typography component="div">
                             {title}
                         </Typography>
                         <Typography variant="subtitle1" color="text.secondary" component="div">
                             {description}
                         </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', marginTop: 2 }}>
+                            {
+                                keywords.map((keyword, index) => {
+                                    const isTypeFilter = filters.type.includes(keyword);
+
+                                    return <Chip key={index} label={keyword} sx={{ mr: 1 }} size='small' color={isTypeFilter ? 'secondary' : 'default'} />
+                                })
+                            }
+                        </Box>
                     </CardContent>
                 </Box>
             </CardActionArea>

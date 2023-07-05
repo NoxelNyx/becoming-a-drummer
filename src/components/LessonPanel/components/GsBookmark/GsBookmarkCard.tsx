@@ -5,6 +5,7 @@ import { addCommunityContentAsync, CommunityContent } from '@/src/components/Pra
 import { useAuthContext } from '@/src/firebase/provider';
 import { useAppDispatch, useAppSelector } from '@/src/redux/hooks';
 import { selectSharedState } from '@/src/redux/slice';
+import Draggable from 'react-draggable';
 import React from 'react';
 import FilterBar from '@/src/components/FilterBar';
 
@@ -25,6 +26,7 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
     const [communityContentDescription, setCommunityContentDescription] = React.useState<string | null>(null);
     const [selectedTypeFilters, setSelectedTypeFilters] = React.useState<string[]>([]);
     const [selectedDifficultyFilters, setSelectedDifficultyFilters] = React.useState<string[]>([]);
+    const { currentVideoTitle } = useAppSelector(selectSharedState);
     const titleInputRef = React.useRef<HTMLInputElement>(null);
     const descriptionInputRef = React.useRef<HTMLInputElement>(null);
     const menuOpen = Boolean(menuAnchorEl);
@@ -64,6 +66,7 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
     };
 
     const handlePopoverClose = () => {
+        handleContextClose();
         setPopoverAnchorEl(null);
     };
 
@@ -99,10 +102,10 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
     };
 
     const handleSaveCommunityContent = () => {
-        if (communityContentTitle && communityContentDescription) {
+        if (communityContentTitle && communityContentDescription && selectedTypeFilters.length > 0) {
             const newCommunityContent: CommunityContent = {
                 title: communityContentTitle,
-                videoTitle: title,
+                videoTitle: currentVideoTitle as string,
                 description: communityContentDescription,
                 keywords: [...selectedTypeFilters, ...selectedDifficultyFilters],
                 params,
@@ -117,7 +120,7 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
     };
 
     return (
-        <React.Fragment>
+            <React.Fragment>
             <Card
                 sx={{ height: 50, mr: 2 }}
                 onClick={handleOnClick}
@@ -171,7 +174,9 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
                 }}
                 color='secondary'
                 elevation={8}
-                sx={{ width: '50%' }}>
+                slotProps={{
+                    paper: { sx: { width: 375 } }
+                }}>
                 <Box sx={{ p: 2 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'left' }}>
                         <TextField
@@ -203,6 +208,6 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
                     <Button sx={{ mt: 2 }} fullWidth color='secondary' variant='outlined' onClick={handleSaveCommunityContent}>Share</Button>
                 </Box>
             </Popover>
-        </React.Fragment>
+            </React.Fragment>
     );
 }
