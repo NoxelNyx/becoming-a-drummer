@@ -5,7 +5,6 @@ import { addCommunityContentAsync, CommunityContent } from '@/src/components/Pra
 import { useAuthContext } from '@/src/firebase/provider';
 import { useAppDispatch, useAppSelector } from '@/src/redux/hooks';
 import { selectSharedState } from '@/src/redux/slice';
-import Draggable from 'react-draggable';
 import React from 'react';
 import FilterBar from '@/src/components/FilterBar';
 
@@ -68,6 +67,9 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
     const handlePopoverClose = () => {
         handleContextClose();
         setPopoverAnchorEl(null);
+        setCommunityContentTitle(null);
+        setCommunityContentDescription(null);
+        setSelectedTypeFilters([]);
     };
 
     const handleTypeFilterSelect = React.useCallback((label: string, selected: boolean) => {

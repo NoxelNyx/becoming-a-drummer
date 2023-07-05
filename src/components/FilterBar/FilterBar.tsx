@@ -41,13 +41,15 @@ export default function FilterBar({ handleTypeFilterSelect, handleDifficultyFilt
                     ))
                 }
             </Box>
-            <Box marginTop={3}>
-                {
-                    filters.difficulty.map((filter, index) => (
-                        <CommunityContentFilter key={index} label={filter} color='default' handleFilterSelect={handleDifficultyFilterSelect} selected={selectedDifficultyFilters.includes(filter)} />
-                    ))
-                }
-            </Box>
+            {selectedTypeFilters.length > 0 &&
+                <Box marginTop={3}>
+                    {
+                        filters.difficulty.map((filter, index) => (
+                            <CommunityContentFilter key={index} label={filter} color='default' handleFilterSelect={handleDifficultyFilterSelect} selected={selectedDifficultyFilters.includes(filter)} />
+                        ))
+                    }
+                </Box>
+            }
         </Box>
     );
 }
