@@ -47,12 +47,12 @@ export default function CommunityContent({ title, videoTitle, description, video
                         <Typography variant="subtitle1" color="text.secondary" component="div">
                             {description}
                         </Typography>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', marginTop: 2 }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', marginTop: 1 }}>
                             {
                                 keywords.map((keyword, index) => {
                                     const isTypeFilter = filters.type.includes(keyword);
 
-                                    return <Chip key={index} label={keyword} sx={{ mr: 1 }} size='small' color={isTypeFilter ? 'secondary' : 'default'} />
+                                    return <Chip key={index} label={keyword} sx={{ mr: 1, mt: 1 }} size='small' color={isTypeFilter ? 'secondary' : 'default'} />
                                 })
                             }
                         </Box>
