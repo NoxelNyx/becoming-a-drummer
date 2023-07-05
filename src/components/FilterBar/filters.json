@@ -1,0 +1,21 @@
+{
+    "type": [
+        "covers",
+        "feet",
+        "hands",
+        "independence",
+        "rudiments",
+        "polyrhythms",
+        "syncopation",
+        "grooves",
+        "fills",
+        "odd time",
+        "other"
+    ],
+    "difficulty": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "expert"
+    ]
+}

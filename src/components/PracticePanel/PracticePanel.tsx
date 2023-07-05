@@ -1,20 +1,22 @@
-import React, { useEffect, useCallback } from 'react';
-import { Drawer, Tab, AppBar, IconButton, Typography, Box, Stack } from '@mui/material';
-import { ViewList, History, Bookmark, ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
+import React, { use, useEffect } from 'react';
+import { Drawer, Tab, AppBar, IconButton, Typography, Box, Stack, Grid } from '@mui/material';
+import { People, Bookmark, ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
 import { TabContext, TabList } from '@mui/lab';
-import { selectPracticePanelState, newPracticeSession, getBookmarksAsync } from './slice';
+import { selectPracticePanelState, getBookmarksAsync, getCommunityContentAsync, resetCommunityContent, selectFilteredCommunityContent } from './slice';
 import { useAppSelector, useAppDispatch } from '@/src/redux/hooks';
-import { selectSharedState } from '@/src/redux/slice';
 import { useAuthContext } from '@/src/firebase/provider';
-import PracticeLog from './components/PracticeLog';
+import { AppState } from '@/src/redux/store';
 import Bookmarks from './components/Bookmark';
+import CommunityContent from './components/CommunityContent';
+import FilterBar from '@/src/components/FilterBar';
 
 export default function PracticePanel() {
     const [value, setValue] = React.useState('1');
-    const [index, setIndex] = React.useState(0);
     const [open, setOpen] = React.useState(false);
-    const { practiceSessions, bookmarks } = useAppSelector(selectPracticePanelState);
-    const { currentVideoId } = useAppSelector(selectSharedState);
+    const [selectedTypeFilters, setSelectedTypeFilters] = React.useState<string[]>([]);
+    const [selectedDifficultyFilters, setSelectedDifficultyFilters] = React.useState<string[]>([]);
+    const { bookmarks, communityContent } = useAppSelector(selectPracticePanelState);
+    const [filteredCommunityContent, setFilteredCommunityContent] = React.useState<AppState['practicePanel']['communityContent']>(communityContent);
     const dispatch = useAppDispatch();
     const user = useAuthContext();
 
@@ -22,18 +24,52 @@ export default function PracticePanel() {
         dispatch(getBookmarksAsync(user?.uid as string));
     }, [dispatch, user?.uid]);
 
-    const handleNewPracticeSessionOnClick = (e: React.SyntheticEvent) => {
-        dispatch(newPracticeSession(currentVideoId as string));
-    };
+    useEffect(() => {
+        setFilteredCommunityContent(communityContent);
+    }, [communityContent]);
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
-        setIndex(parseInt(newValue) - 1);
     };
 
     const handleToggleDrawer = () => {
         setOpen(!open);
     };
+
+    const handleTypeFilterSelect = React.useCallback((label: string, selected: boolean) => {
+        let newSelectedFilters = [];
+
+        if (selected)
+            newSelectedFilters = [...selectedTypeFilters, label];
+        else
+            newSelectedFilters = selectedTypeFilters.filter(filter => filter !== label);
+
+        setSelectedTypeFilters(newSelectedFilters);
+
+        if (newSelectedFilters.length > 0)
+            dispatch(getCommunityContentAsync(newSelectedFilters));
+        else {
+            dispatch(resetCommunityContent());
+            setSelectedDifficultyFilters([]);
+        }
+
+    }, [dispatch, selectedTypeFilters]);
+
+    const handleDifficultyFilterSelect = React.useCallback((label: string, selected: boolean) => {
+        let newSelectedFilters = [];
+
+        if (selected)
+            newSelectedFilters = [...selectedDifficultyFilters, label];
+        else
+            newSelectedFilters = selectedDifficultyFilters.filter(filter => filter !== label);
+
+        setSelectedDifficultyFilters(newSelectedFilters);
+
+        if (newSelectedFilters.length > 0)
+            setFilteredCommunityContent(selectFilteredCommunityContent(communityContent, newSelectedFilters));
+        else
+            setFilteredCommunityContent(communityContent);
+    }, [communityContent, selectedDifficultyFilters]);
 
     let panelStyles = {
         PracticeLog: {
@@ -68,10 +104,10 @@ export default function PracticePanel() {
         value: string;
         sx?: object;
     }
-    
+
     function TabPanel(props: TabPanelProps) {
         const { children, value, index, ...other } = props;
-    
+
         return (
             <Typography
                 component="div"
@@ -126,15 +162,16 @@ export default function PracticePanel() {
                                 variant="fullWidth"
                                 onChange={handleChange}>
                                 <Tab icon={<Bookmark />} value="1" />
+                                <Tab icon={<People />} value="2" />
                             </TabList>
                         </AppBar>
                         <TabPanel value={value} index={1} sx={panelStyles.Bookmarks}>
                             <Stack>
-                                { bookmarks.length === 0
+                                {bookmarks.length === 0
                                     ? <div>No bookmarks</div>
                                     : bookmarks.map((bookmark) => {
                                         return (
-                                            <Box 
+                                            <Box
                                                 key={bookmark.videoId}
                                                 sx={{ maxWidth: 320, maxHeight: 180, marginBottom: 2 }}>
                                                 <Bookmarks
@@ -144,8 +181,29 @@ export default function PracticePanel() {
                                                     toggleDrawer={handleToggleDrawer} />
                                             </Box>
                                         );
-                                })}
+                                    })}
                             </Stack>
+                        </TabPanel>
+                        <TabPanel value={value} index={2}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <FilterBar
+                                        selectedTypeFilters={selectedTypeFilters}
+                                        handleTypeFilterSelect={handleTypeFilterSelect}
+                                        selectedDifficultyFilters={selectedDifficultyFilters}
+                                        handleDifficultyFilterSelect={handleDifficultyFilterSelect} />
+                                </Grid>
+                                <Grid item xs={12} justifyContent={'left'} display={'flex'} alignItems={'center'} flexDirection={'column'}>
+                                    {
+                                        filteredCommunityContent.map((content, index) => {
+                                            return (
+                                                <Box key={index} marginTop={3} width={'100%'}>
+                                                    <CommunityContent title={content.title} videoTitle={content.videoTitle} videoId={content.videoId as string} description={content.description} params={content.params} />
+                                                </Box>);
+                                        })
+                                    }
+                                </Grid>
+                            </Grid>
                         </TabPanel>
                     </TabContext>
                 </Drawer>

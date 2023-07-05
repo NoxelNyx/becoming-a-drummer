@@ -132,7 +132,9 @@ export default function LessonPanel({ className, videoId }: { className?: string
                                     params={bookmark.params as string}
                                     title={bookmark.title as string}
                                     active={bookmark.active as boolean}
-                                    handleGsParamsChange={handleGsParamsChange} />
+                                    shared={bookmark.shared as boolean}
+                                    handleGsParamsChange={handleGsParamsChange}
+                                    videoId={videoId} />
                             );
                         })
                     }

@@ -23,3 +23,9 @@ export async function deleteGsBookmark(uid: string, gsBookmarkId: string) {
 
     return gsBookmarkId;
 }
+
+export async function updateGsBookmark(uid: string, gsBookmark: GsBookmark) {
+    await setDoc(doc(db, `users/${uid}/gsBookmarks/${gsBookmark.id}`), gsBookmark, { merge: true });
+
+    return gsBookmark;
+}

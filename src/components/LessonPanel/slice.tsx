@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { fetchGsBookmarks, addGsBookmark, deleteGsBookmark } from './api';
+import { fetchGsBookmarks, addGsBookmark, deleteGsBookmark, updateGsBookmark } from './api';
 import { AppState } from '@/src/redux/store';
 
 export interface GsBookmark {
@@ -8,6 +8,7 @@ export interface GsBookmark {
     videoId?: string,
     title?: string,
     active?: boolean,
+    shared?: boolean,
 };
 
 export interface LessonPanelState {
@@ -39,6 +40,13 @@ export const deleteGsBookmarkAsync = createAsyncThunk(
     }
 );
 
+export const updateGsBookmarkAsync = createAsyncThunk(
+    'gsBookmarks/update',
+    async (args: { uid: string, gsBookmark: GsBookmark }) => {
+        return await updateGsBookmark(args.uid, args.gsBookmark);
+    }
+);
+
 export const lessonPanelSlice = createSlice({
     name: 'lessonPanel',
     initialState,
@@ -66,7 +74,15 @@ export const lessonPanelSlice = createSlice({
             state.gsBookmarks = state.gsBookmarks.filter((gsBookmark) => {
                 return gsBookmark.id !== action.payload;
             });
-        });
+        })
+        .addCase(updateGsBookmarkAsync.fulfilled, (state, action) => {
+            state.gsBookmarks = state.gsBookmarks.map((gsBookmark) => {
+                if (gsBookmark.id === action.payload.id)
+                    gsBookmark = {...gsBookmark, ...action.payload} as GsBookmark;
+                
+                return gsBookmark;
+            });
+        })
     },
 });
 
