@@ -1,10 +1,12 @@
 import { activateSection, deactivateSections, addSectionAsync, updateSectionAsync, deleteLocalSection, deleteSectionAsync } from '@/src/components/VideoEmbed/slice';
 import { useAppDispatch } from '@/src/redux/hooks';
 import { Delete, Edit, Check } from '@mui/icons-material';
-import { Box, Card, CardActionArea, CardContent, IconButton, Input } from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, IconButton } from '@mui/material';
+import { TimePicker } from '@mui/x-date-pickers';
 import React from 'react';
 import { YouTubePlayer } from 'react-youtube';
 import { useAuthContext } from '@/src/firebase/provider';
+import dayjs, { Dayjs } from 'dayjs';
 
 interface SectionCardProps {
     id: string,
@@ -22,8 +24,8 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
     let timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
     let activeRef = React.useRef<boolean>(active);
     const [editEnabled, setEditEnabled] = React.useState(defaultEdit || false);
-    const [newStart, setNewStart] = React.useState(start);
-    const [newEnd, setNewEnd] = React.useState(end);
+    const [newStart, setNewStart] = React.useState<Dayjs | null>(dayjs(start));
+    const [newEnd, setNewEnd] = React.useState<Dayjs | null>(dayjs(end));
     const dispatch = useAppDispatch();
     const user = useAuthContext();
 
@@ -38,9 +40,9 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
         setEditEnabled(false);
 
         if (id)
-            dispatch(updateSectionAsync({ uid: user?.uid as string, section: { id, start: newStart, end: newEnd, videoId } }));
+            dispatch(updateSectionAsync({ uid: user?.uid as string, section: { id, start: newStart?.valueOf(), end: newEnd?.valueOf(), videoId } }));
         else {
-            dispatch(addSectionAsync({ uid: user?.uid as string, newSection: { start: newStart, end: newEnd, active: false, videoId } }));
+            dispatch(addSectionAsync({ uid: user?.uid as string, newSection: { start: newStart?.valueOf(), end: newEnd?.valueOf(), active: false, videoId } }));
             dispatch(deleteLocalSection(index));
         }
     };
@@ -74,10 +76,10 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
     const setRepeat: any = React.useCallback(() => {
         timeoutRef.current = setTimeout(async () => {
             if (await playerRef.getPlayerState() === 1 && activeRef.current) {
-                playerRef.seekTo(start, true);
+                playerRef.seekTo(start / 1000, true);
                 setRepeat();
             }
-        }, ((end - start + 1) * 1000) / playbackRate);
+        }, (end - start + 1) / playbackRate);
     }, [end, playbackRate, playerRef, start, activeRef]);
 
     const handleClick = React.useCallback(() => {
@@ -98,7 +100,7 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
             activeRef.current = true;
 
             playerRef.removeEventListener('onStateChange', handleStateChange);
-            playerRef.seekTo(start, true);
+            playerRef.seekTo(start / 1000, true);
             playerRef.playVideo();
 
             setRepeat();
@@ -118,26 +120,40 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
                     <CardContent sx={{ p: 0, pl: 1.5 }}>
                         <Box sx={{ float: 'left', mt: '.4rem' }} display={'inline-block'}>
                             {editEnabled
-                                ? <Input
-                                    sx={{ maxWidth: 80 }}
-                                    size='small'
-                                    placeholder='Start'
-                                    color='secondary'
-                                    value={newStart}
-                                    type='number'
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewStart(parseInt(e.target.value))} />
-                                : <span>Start: {start}</span>
-                            }
-                            {editEnabled
-                                ? <Input
-                                    sx={{ maxWidth: 80, ml: 1 }}
-                                    size='small'
-                                    placeholder='End'
-                                    color='secondary'
-                                    value={newEnd}
-                                    type='number'
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEnd(parseInt(e.target.value))} />
-                                : <span className='ml-3'>End: {end}</span>
+                                ? <React.Fragment>
+                                    <TimePicker
+                                        slotProps={{ 
+                                            textField: { 
+                                                size: 'small', 
+                                                color: 'secondary',
+                                                variant: 'standard',
+                                                sx: { width: '80px', mr: 1 }
+                                            }
+                                        }}
+                                        label="Start"
+                                        format="m[m] ss[s]"
+                                        value={newStart}
+                                        onChange={(value) => setNewStart(value)}
+                                        disableOpenPicker />
+                                    <TimePicker
+                                        slotProps={{ 
+                                            textField: { 
+                                                size: 'small', 
+                                                color: 'secondary',
+                                                variant: 'standard',
+                                                sx: { width: '80px' }
+                                            }
+                                        }}
+                                        label="End"
+                                        format="m[m] ss[s]"
+                                        value={newEnd}
+                                        onChange={(value) => setNewEnd(value)}
+                                        disableOpenPicker />
+                                </React.Fragment>
+                                : <React.Fragment>
+                                    <span>Start: {dayjs(start).format('m:ss')}</span>
+                                    <span className='ml-3'>End: {dayjs(end).format('m:ss')}</span>
+                                </React.Fragment>
                             }
                         </Box>
                         <Box sx={{ float: 'right' }}>

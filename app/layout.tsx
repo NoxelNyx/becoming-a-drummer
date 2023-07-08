@@ -6,6 +6,8 @@ import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { ProviderWrapper } from '@/src/redux/provider';
 import { createTheme, Theme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Container, Grid } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Nav from '@/src/components/Nav';
@@ -44,17 +46,19 @@ export default function RootLayout({
                     <ThemeProvider theme={theme}>
                         <CssBaseline />
                         <ProviderWrapper>
-                            <Container className="App h-screen" maxWidth="xl">
-                                <Grid container className={pathname === '/' ? 'h-screen' : ''}>
-                                    <Grid item xs={12} className="max-h-20">
-                                        <Nav />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <Container className="App h-screen" maxWidth="xl">
+                                    <Grid container className={pathname === '/' ? 'h-screen' : ''}>
+                                        <Grid item xs={12} className="max-h-20">
+                                            <Nav />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            {children}
+                                        </Grid>
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        {children}
-                                    </Grid>
-                                </Grid>
-                            </Container>
-                            <PracticePanel />
+                                </Container>
+                                <PracticePanel />
+                            </LocalizationProvider>
                         </ProviderWrapper>
                     </ThemeProvider>
                 </AuthContextProvider>
