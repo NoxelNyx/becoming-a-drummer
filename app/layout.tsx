@@ -26,6 +26,22 @@ let theme: Theme = createTheme({
 
 theme = responsiveFontSizes(theme);
 
+export function getCurrentBreakpoint() {
+    const breakpoints = theme.breakpoints.values;
+    const width = window.innerWidth;
+
+    if (width < breakpoints.sm)
+        return 'xs';
+    else if (width < breakpoints.md)
+        return 'sm';
+    else if (width < breakpoints.lg)
+        return 'md';
+    else if (width < breakpoints.xl)
+        return 'lg';
+    else
+        return 'xl';
+}
+
 export default function RootLayout({
     children,
 }: {

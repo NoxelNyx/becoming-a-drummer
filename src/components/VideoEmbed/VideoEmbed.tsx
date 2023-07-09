@@ -1,10 +1,12 @@
 import React, { FC, useState } from 'react';
-import { Button, Typography, IconButton, Box, Stack } from '@mui/material';
+import { Button, Typography, IconButton, Box, Stack, useTheme, useMediaQuery } from '@mui/material';
 import { Bookmark, BookmarkBorder, FiberManualRecord, Pause } from '@mui/icons-material';
-import YouTube, { YouTubeEvent, YouTubePlayer } from 'react-youtube';
+import YouTube, { YouTubeEvent } from 'react-youtube';
 import { useAppSelector, useAppDispatch } from '@/src/redux/hooks';
 import { useAuthContext } from '@/src/firebase/provider';
 import SectionCard from './components/SectionCard';
+import dayjs from 'dayjs';
+import { getCurrentBreakpoint } from '@/app/layout';
 import {
     selectPracticePanelState,
     addBookmarkAsync,
@@ -31,20 +33,45 @@ const styles = {
     }
 };
 
+const videoSizes = {
+    xs: {
+        width: '220',
+        height: '100%'
+    },
+    sm: {
+        width: '448',
+        height: '252'
+    },
+    md: {
+        width: '560',
+        height: '315'
+    },
+    lg: {
+        width: '720',
+        height: '405'
+    },
+    xl: {
+        width: '860',
+        height: '484'
+    }
+};
+
 const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
     let playerRef = React.useRef<any>(null);
     let bookmarkRef = React.useRef<BookmarkType | null>(null);
+    const [loaded, setLoaded] = useState<boolean>(false);
     const [playbackRate, setPlaybackRate] = useState<number>(1);
     const [recording, setRecording] = useState<boolean>(false);
     const [newSectionStartTime, setNewSectionStartTime] = useState<number>(0);
     const { bookmarks } = useAppSelector(selectPracticePanelState);
     const { sections } = useAppSelector(selectVideoEmbedState);
-    const { currentVideoTitle } = useAppSelector(selectSharedState);
     const dispatch = useAppDispatch();
     const user = useAuthContext();
+    const currentBreakpoint = getCurrentBreakpoint();
+    const theme = useTheme();
     const options = {
-        height: '480',
-        width: '853'
+        height: videoSizes[currentBreakpoint].height,
+        width: videoSizes[currentBreakpoint].width,
     };
 
     const bookmarked = bookmarks.filter((bookmark: BookmarkType) => {
@@ -76,7 +103,11 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
     const onPlayerReady = (e: YouTubeEvent) => {
         playerRef.current = e.target;
 
-        dispatch(getSectionsAsync({ uid: user?.uid as string, videoId: videoId as string }));
+        if (!loaded) {
+            setLoaded(true);
+            dispatch(getSectionsAsync({ uid: user?.uid as string, videoId: videoId as string }));
+        }
+
         dispatch(setCurrentVideoTitle(playerRef.current.getVideoData().title));
     };
 
@@ -102,70 +133,78 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
     };
 
     const handleNewSectionClick = () => {
+        const startMillisecond = dayjs(newSectionStartTime).valueOf() * 1000;
+
         if (recording) {
+            const endMillisecond = dayjs(playerRef.current.getCurrentTime()).valueOf() * 1000;
+
             setRecording(false);
             dispatch(addLocalSection({
-                start: newSectionStartTime,
-                end: Math.floor(playerRef.current.getCurrentTime()),
+                start: startMillisecond,
+                end: endMillisecond,
                 repeat: true,
                 active: false,
                 defaultEdit: true
             }));
         } else {
             setRecording(true);
-            setNewSectionStartTime(Math.floor(playerRef.current.getCurrentTime()));
+            setNewSectionStartTime(playerRef.current.getCurrentTime());
         }
     };
 
     return (
-        <Box className="video-embed" display='flex' justifyContent={'center'}>
-            <Box className="section-list align-top" display='inline-block' minWidth={250} maxHeight={500} sx={{ mr: 2 }}>
-                <Button
-                    sx={{
-                        width: '100%',
-                        marginBottom: '1rem',
-                        borderRadius: '0',
-                    }}
-                    onClick={handleNewSectionClick}
-                    color={recording ? 'error' : 'secondary'}
-                    variant='outlined'>
+        <Box className="video-embed" display='flex' justifyContent={'center'} pr={{ lg: 0, xl: 18 }}>
+            {useMediaQuery(theme.breakpoints.up('md')) &&
+                <Box className="section-list align-top" display='inline-block' minWidth={250} maxHeight={500} mr={{ md: 2 }}>
+                    <Button
+                        sx={{
+                            width: '100%',
+                            marginBottom: '1rem',
+                            borderRadius: '0',
+                        }}
+                        onClick={handleNewSectionClick}
+                        color={recording ? 'error' : 'secondary'}
+                        variant='outlined'>
                         {
                             !recording
-                            ? <FiberManualRecord />
-                            : <Pause />
+                                ? <FiberManualRecord />
+                                : <Pause />
                         }
-                </Button>
-                <Box overflow={'scroll'} maxHeight={425} sx={{ overflowX: 'visible' }} className='hide-scrollbar'>
-                    <Stack spacing={2}>
-                        {
-                            sections.map((section: Section, index: number) => {
-                                return (
-                                    <SectionCard
-                                        key={section.id}
-                                        id={section.id as string}
-                                        start={section.start as number}
-                                        end={section.end as number}
-                                        playerRef={playerRef.current}
-                                        active={section.active as boolean}
-                                        playbackRate={playbackRate}
-                                        index={index}
-                                        videoId={videoId}
-                                        defaultEdit={section.defaultEdit} />
-                                );
-                            })
-                        }
-                    </Stack>
+                    </Button>
+                    <Box overflow={'scroll'} maxHeight={425} sx={{ overflowX: 'visible' }} className='hide-scrollbar'>
+                        <Stack spacing={2}>
+                            {
+                                sections.map((section: Section, index: number) => {
+                                    return (
+                                        <SectionCard
+                                            key={section.id}
+                                            id={section.id as string}
+                                            start={section.start as number}
+                                            end={section.end as number}
+                                            playerRef={playerRef.current}
+                                            active={section.active as boolean}
+                                            playbackRate={playbackRate}
+                                            index={index}
+                                            videoId={videoId}
+                                            defaultEdit={section.defaultEdit} />
+                                    );
+                                })
+                            }
+                        </Stack>
+                    </Box>
                 </Box>
-            </Box>
+            }
             <Box className="video-container" display='inline-block'>
-                <YouTube
-                    opts={options}
-                    videoId={videoId as string}
-                    iframeClassName='mx-auto'
-                    className='inline-block'
-                    onReady={onPlayerReady}
-                    onPause={resetSections}
-                    onEnd={resetSections} />
+                <Box display='inline-block' justifyContent='space-between'>
+                    <YouTube
+                        opts={options}
+                        videoId={videoId as string}
+                        iframeClassName='mx-auto'
+                        className='inline-block'
+                        onReady={onPlayerReady}
+                        onPause={resetSections}
+                        onEnd={resetSections} />
+                </Box>
                 <Box className='action-buttons align-top' display='inline-block' justifyContent='space-between' flexDirection='column'>
                     <Box>
                         <IconButton

@@ -39,9 +39,10 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
         e.stopPropagation();
         setEditEnabled(false);
 
-        if (id)
-            dispatch(updateSectionAsync({ uid: user?.uid as string, section: { id, start: newStart?.valueOf(), end: newEnd?.valueOf(), videoId } }));
-        else {
+        if (id) {
+            if (newStart?.valueOf() !== start && newEnd?.valueOf() !== end)
+                dispatch(updateSectionAsync({ uid: user?.uid as string, section: { id, start: newStart?.valueOf(), end: newEnd?.valueOf(), videoId } }));
+        } else {
             dispatch(addSectionAsync({ uid: user?.uid as string, newSection: { start: newStart?.valueOf(), end: newEnd?.valueOf(), active: false, videoId } }));
             dispatch(deleteLocalSection(index));
         }
