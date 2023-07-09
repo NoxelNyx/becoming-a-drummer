@@ -5,12 +5,13 @@ type CommunityContentFilterProps = {
     label: string,
     color?: any,
     selected: boolean,
-    handleFilterSelect: (label: string, selected: boolean) => void
+    filterKey: string,
+    handleFilterSelect: (label: string, selected: boolean, filterKey: string) => void
 };
 
-export default function CommunityContentFilter({ label, color, selected, handleFilterSelect }: CommunityContentFilterProps) {
+export default function CommunityContentFilter({ label, color, selected, filterKey, handleFilterSelect }: CommunityContentFilterProps) {
     const handleOnClick = () => {
-        handleFilterSelect(label, !selected);
+        handleFilterSelect(label, !selected, filterKey);
     };
 
     return (

@@ -1,31 +1,10 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import CommunityContentFilter from './components/CommunityContentFilter';
-
-const filters = {
-    type: [
-        'covers',
-        'feet',
-        'hands',
-        'independence',
-        'rudiments',
-        'polyrhythms',
-        'syncopation',
-        'grooves',
-        'fills',
-        'odd time',
-        'other'
-    ],
-    difficulty: [
-        'beginner',
-        'intermediate',
-        'advanced',
-        'expert'
-    ]
-};
+import filters from './filters.json';
 
 type FilterBarProps = {
-    handleFilterSelect: (label: string, selected: boolean) => void,
+    handleFilterSelect: (label: string, selected: boolean, filterKey: string) => void,
     selectedFilters: string[]
 };
 
@@ -35,14 +14,14 @@ export default function FilterBar({ handleFilterSelect, selectedFilters }: Filte
             <Box display={'contents'}>
                 {
                     filters.type.map((filter, index) => (
-                        <CommunityContentFilter key={index} label={filter} color='secondary' handleFilterSelect={handleFilterSelect} selected={selectedFilters.includes(filter)} />
+                        <CommunityContentFilter key={index} label={filter} color='secondary' filterKey='type' handleFilterSelect={handleFilterSelect} selected={selectedFilters.includes(filter)} />
                     ))
                 }
             </Box>
             <Box marginTop={3}>
                 {
                     filters.difficulty.map((filter, index) => (
-                        <CommunityContentFilter key={index} label={filter} color='default' handleFilterSelect={handleFilterSelect} selected={selectedFilters.includes(filter)} />
+                        <CommunityContentFilter key={index} label={filter} color='default' filterKey='difficulty' handleFilterSelect={handleFilterSelect} selected={selectedFilters.includes(filter)} />
                     ))
                 }
             </Box>

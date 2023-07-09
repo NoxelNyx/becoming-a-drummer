@@ -9,6 +9,7 @@ import { AppState } from '@/src/redux/store';
 import Bookmarks from './components/Bookmark';
 import CommunityContent from './components/CommunityContent';
 import FilterBar from '@/src/components/FilterBar';
+import filters from '@/src/components/FilterBar/filters.json';
 
 export default function PracticePanel() {
     const [value, setValue] = React.useState('1');
@@ -36,12 +37,15 @@ export default function PracticePanel() {
         setOpen(!open);
     };
 
-    const handleFilterSelect = React.useCallback((label: string, selected: boolean) => {
-        let newSelectedFilters = [];
+    const handleFilterSelect = React.useCallback((label: string, selected: boolean, filterKey: string) => {
+        let newSelectedFilters: string[] = [];
 
-        if (selected)
-            newSelectedFilters = [...selectedFilters, label];
-        else
+        if (selected) {
+            const filterSet = filters[filterKey as keyof typeof filters];
+
+            newSelectedFilters = selectedFilters.filter(filter => !filterSet.includes(filter));
+            newSelectedFilters = [...newSelectedFilters, label];
+        } else
             newSelectedFilters = selectedFilters.filter(filter => filter !== label);
 
         setSelectedFilters(newSelectedFilters);
