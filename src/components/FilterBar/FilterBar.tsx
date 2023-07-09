@@ -25,31 +25,27 @@ const filters = {
 };
 
 type FilterBarProps = {
-    handleTypeFilterSelect: (label: string, selected: boolean) => void,
-    handleDifficultyFilterSelect: (label: string, selected: boolean) => void,
-    selectedTypeFilters: string[],
-    selectedDifficultyFilters: string[]
+    handleFilterSelect: (label: string, selected: boolean) => void,
+    selectedFilters: string[]
 };
 
-export default function FilterBar({ handleTypeFilterSelect, handleDifficultyFilterSelect, selectedTypeFilters, selectedDifficultyFilters }: FilterBarProps) {
+export default function FilterBar({ handleFilterSelect, selectedFilters }: FilterBarProps) {
     return (
         <Box display={'flex'} justifyContent={'center'} alignItems={'center'} flexWrap={'wrap'} marginTop={3}>
             <Box display={'contents'}>
                 {
                     filters.type.map((filter, index) => (
-                        <CommunityContentFilter key={index} label={filter} color='secondary' handleFilterSelect={handleTypeFilterSelect} selected={selectedTypeFilters.includes(filter)} />
+                        <CommunityContentFilter key={index} label={filter} color='secondary' handleFilterSelect={handleFilterSelect} selected={selectedFilters.includes(filter)} />
                     ))
                 }
             </Box>
-            {selectedTypeFilters.length > 0 &&
-                <Box marginTop={3}>
-                    {
-                        filters.difficulty.map((filter, index) => (
-                            <CommunityContentFilter key={index} label={filter} color='default' handleFilterSelect={handleDifficultyFilterSelect} selected={selectedDifficultyFilters.includes(filter)} />
-                        ))
-                    }
-                </Box>
-            }
+            <Box marginTop={3}>
+                {
+                    filters.difficulty.map((filter, index) => (
+                        <CommunityContentFilter key={index} label={filter} color='default' handleFilterSelect={handleFilterSelect} selected={selectedFilters.includes(filter)} />
+                    ))
+                }
+            </Box>
         </Box>
     );
 }

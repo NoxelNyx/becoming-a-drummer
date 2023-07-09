@@ -23,7 +23,7 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
     const [popoverAnchorEl, setPopoverAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [communityContentTitle, setCommunityContentTitle] = React.useState<string | null>(null);
     const [communityContentDescription, setCommunityContentDescription] = React.useState<string | null>(null);
-    const [selectedTypeFilters, setSelectedTypeFilters] = React.useState<string[]>([]);
+    const [selectedFilters, setSelectedFilters] = React.useState<string[]>([]);
     const [selectedDifficultyFilters, setSelectedDifficultyFilters] = React.useState<string[]>([]);
     const { currentVideoTitle } = useAppSelector(selectSharedState);
     const titleInputRef = React.useRef<HTMLInputElement>(null);
@@ -69,31 +69,20 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
         setPopoverAnchorEl(null);
         setCommunityContentTitle(null);
         setCommunityContentDescription(null);
-        setSelectedTypeFilters([]);
+        setSelectedFilters([]);
     };
 
-    const handleTypeFilterSelect = React.useCallback((label: string, selected: boolean) => {
+    const handleFilterSelect = React.useCallback((label: string, selected: boolean) => {
         let newSelectedFilters = [];
 
         if (selected)
-            newSelectedFilters = [...selectedTypeFilters, label];
+            newSelectedFilters = [...selectedFilters, label];
         else
-            newSelectedFilters = selectedTypeFilters.filter(filter => filter !== label);
+            newSelectedFilters = selectedFilters.filter(filter => filter !== label);
 
-        setSelectedTypeFilters(newSelectedFilters);
+        setSelectedFilters(newSelectedFilters);
 
-    }, [selectedTypeFilters]);
-
-    const handleDifficultyFilterSelect = React.useCallback((label: string, selected: boolean) => {
-        let newSelectedFilters = [];
-
-        if (selected)
-            newSelectedFilters = [...selectedDifficultyFilters, label];
-        else
-            newSelectedFilters = selectedDifficultyFilters.filter(filter => filter !== label);
-
-        setSelectedDifficultyFilters(newSelectedFilters);
-    }, [selectedDifficultyFilters]);
+    }, [selectedFilters]);
 
     const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCommunityContentTitle(event.target.value);
@@ -104,12 +93,12 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
     };
 
     const handleSaveCommunityContent = () => {
-        if (communityContentTitle && communityContentDescription && selectedTypeFilters.length > 0) {
+        if (communityContentTitle && communityContentDescription && selectedFilters.length > 0) {
             const newCommunityContent: CommunityContent = {
                 title: communityContentTitle,
                 videoTitle: currentVideoTitle as string,
                 description: communityContentDescription,
-                keywords: [...selectedTypeFilters, ...selectedDifficultyFilters],
+                keywords: selectedFilters,
                 params,
                 type: 'gsBookmark',
                 videoId: videoId
@@ -202,10 +191,8 @@ export default function GsBookmarkCard({ id, params, title, active, handleGsPara
                             multiline
                             sx={{ mt: 2 }} />
                         <FilterBar
-                            handleTypeFilterSelect={handleTypeFilterSelect}
-                            handleDifficultyFilterSelect={handleDifficultyFilterSelect}
-                            selectedTypeFilters={selectedTypeFilters}
-                            selectedDifficultyFilters={selectedDifficultyFilters} />
+                            handleFilterSelect={handleFilterSelect}
+                            selectedFilters={selectedFilters} />
                     </Box>
                     <Button sx={{ mt: 2 }} fullWidth color='secondary' variant='outlined' onClick={handleSaveCommunityContent}>Share</Button>
                 </Box>

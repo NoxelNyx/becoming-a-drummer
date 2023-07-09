@@ -40,8 +40,8 @@ const initialState: PracticePanelState = {
 
 export const getCommunityContentAsync = createAsyncThunk(
     'communityContent/fetch',
-    async (keywords: string[]) => {
-        return await fetchCommunityContent(keywords);
+    async () => {
+        return await fetchCommunityContent();
     }
 );
 
@@ -104,9 +104,9 @@ export const practicePanelSlice = createSlice({
 
 export const selectFilteredCommunityContent = (communityContent: CommunityContent[], keywords: string[]) => {
     return communityContent.filter((content) => {
-        const found = keywords.some((keyword) => {
+        const found = keywords.filter((keyword) => {
             return content.keywords.includes(keyword);
-        });
+        }).length === keywords.length;
 
         return found;
     });

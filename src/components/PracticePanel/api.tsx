@@ -1,4 +1,4 @@
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query, where, addDoc, deleteDoc } from "firebase/firestore";
+import { getFirestore, doc, orderBy, collection, getDocs, query, where, addDoc, deleteDoc } from "firebase/firestore";
 import { Bookmark, CommunityContent } from "./slice";
 import firebase_app from "@/src/firebase/config";
 
@@ -23,9 +23,9 @@ export async function deleteBookmark(uid: string, bookmarkId: string) {
     return bookmarkId;
 }
 
-export async function fetchCommunityContent(keywords: string[]) {
+export async function fetchCommunityContent() {
     let communityContentRef = collection(db, 'communityContent');
-    let q = query(communityContentRef, where('keywords', 'array-contains-any', keywords), where('type', '==', 'gsBookmark'));
+    let q = query(communityContentRef, where('type', '==', 'gsBookmark'), orderBy('videoTitle'));
     let docSnap = await getDocs(q);
 
     return docSnap.docs.map(doc => { return { id: doc.id, ...doc.data() } });

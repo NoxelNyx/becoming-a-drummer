@@ -13,8 +13,7 @@ import FilterBar from '@/src/components/FilterBar';
 export default function PracticePanel() {
     const [value, setValue] = React.useState('1');
     const [open, setOpen] = React.useState(false);
-    const [selectedTypeFilters, setSelectedTypeFilters] = React.useState<string[]>([]);
-    const [selectedDifficultyFilters, setSelectedDifficultyFilters] = React.useState<string[]>([]);
+    const [selectedFilters, setSelectedFilters] = React.useState<string[]>([]);
     const { bookmarks, communityContent } = useAppSelector(selectPracticePanelState);
     const [filteredCommunityContent, setFilteredCommunityContent] = React.useState<AppState['practicePanel']['communityContent']>(communityContent);
     const dispatch = useAppDispatch();
@@ -22,7 +21,8 @@ export default function PracticePanel() {
 
     useEffect(() => {
         dispatch(getBookmarksAsync(user?.uid as string));
-    }, [dispatch, user?.uid]);
+        dispatch(getCommunityContentAsync());
+    }, [dispatch, user]);
 
     useEffect(() => {
         setFilteredCommunityContent(communityContent);
@@ -36,40 +36,22 @@ export default function PracticePanel() {
         setOpen(!open);
     };
 
-    const handleTypeFilterSelect = React.useCallback((label: string, selected: boolean) => {
+    const handleFilterSelect = React.useCallback((label: string, selected: boolean) => {
         let newSelectedFilters = [];
 
         if (selected)
-            newSelectedFilters = [...selectedTypeFilters, label];
+            newSelectedFilters = [...selectedFilters, label];
         else
-            newSelectedFilters = selectedTypeFilters.filter(filter => filter !== label);
+            newSelectedFilters = selectedFilters.filter(filter => filter !== label);
 
-        setSelectedTypeFilters(newSelectedFilters);
-
-        if (newSelectedFilters.length > 0)
-            dispatch(getCommunityContentAsync(newSelectedFilters));
-        else {
-            dispatch(resetCommunityContent());
-            setSelectedDifficultyFilters([]);
-        }
-
-    }, [dispatch, selectedTypeFilters]);
-
-    const handleDifficultyFilterSelect = React.useCallback((label: string, selected: boolean) => {
-        let newSelectedFilters = [];
-
-        if (selected)
-            newSelectedFilters = [...selectedDifficultyFilters, label];
-        else
-            newSelectedFilters = selectedDifficultyFilters.filter(filter => filter !== label);
-
-        setSelectedDifficultyFilters(newSelectedFilters);
+        setSelectedFilters(newSelectedFilters);
 
         if (newSelectedFilters.length > 0)
             setFilteredCommunityContent(selectFilteredCommunityContent(communityContent, newSelectedFilters));
         else
             setFilteredCommunityContent(communityContent);
-    }, [communityContent, selectedDifficultyFilters]);
+
+    }, [communityContent, selectedFilters]);
 
     let panelStyles = {
         PracticeLog: {
@@ -188,10 +170,8 @@ export default function PracticePanel() {
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <FilterBar
-                                        selectedTypeFilters={selectedTypeFilters}
-                                        handleTypeFilterSelect={handleTypeFilterSelect}
-                                        selectedDifficultyFilters={selectedDifficultyFilters}
-                                        handleDifficultyFilterSelect={handleDifficultyFilterSelect} />
+                                        selectedFilters={selectedFilters}
+                                        handleFilterSelect={handleFilterSelect} />
                                 </Grid>
                                 <Grid item xs={12} justifyContent={'left'} display={'flex'} alignItems={'center'} flexDirection={'column'}>
                                     {
