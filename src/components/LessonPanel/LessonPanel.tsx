@@ -90,7 +90,7 @@ export default function LessonPanel({ className, videoId }: { className?: string
 
     return (
         <Box sx={{ width: '100%', height: 580, bgcolor: 'background.paper' }} className={className}>
-            <Box display='flex' marginY={2} marginBottom={2} marginLeft={1} alignItems={'left'}>
+            <Box display='flex' marginY={2} marginBottom={2} marginLeft={2} alignItems={'left'}>
                 <Fab color='secondary' size='small' aria-label='new' sx={{ mr: 2 }} onClick={handlePopoverOpen}>
                     <Add />
                 </Fab>
