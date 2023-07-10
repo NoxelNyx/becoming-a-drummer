@@ -90,55 +90,55 @@ export default function LessonPanel({ className, videoId }: { className?: string
 
     return (
         <Box sx={{ width: '100%', height: 580, bgcolor: 'background.paper' }} className={className}>
-                <Box display='flex' marginY={2} marginBottom={2} alignItems={'left'}>
-                    <Fab color='secondary' size='small' aria-label='new' sx={{ mr: 2 }} onClick={handlePopoverOpen}>
-                        <Add />
-                    </Fab>
-                    <Popover
-                        open={open}
-                        anchorEl={popoverAnchorEl}
-                        onClose={handlePopoverClose}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        transformOrigin={{
-                            vertical: 'center',
-                            horizontal: 'left',
-                        }}
-                        color='secondary'
-                        elevation={8}>
-                        <Box sx={{ p: 2 }}>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'left' }}>
-                                <TextField
-                                    size='small'
-                                    placeholder='Title'
-                                    color='secondary'
-                                    value={gsBookmarkTitle}
-                                    onChange={handleNewGsBookmarkTitleChange}
-                                    ref={titleInputRef}
-                                    variant='standard'
-                                    autoFocus={true} />
-                            </Box>
-                            <Button sx={{ mt: 2 }} fullWidth color='secondary' variant='outlined' onClick={handleSaveGsBookmark}>Save</Button>
+            <Box display='flex' marginY={2} marginBottom={2} marginLeft={1} alignItems={'left'}>
+                <Fab color='secondary' size='small' aria-label='new' sx={{ mr: 2 }} onClick={handlePopoverOpen}>
+                    <Add />
+                </Fab>
+                <Popover
+                    open={open}
+                    anchorEl={popoverAnchorEl}
+                    onClose={handlePopoverClose}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'center',
+                        horizontal: 'left',
+                    }}
+                    color='secondary'
+                    elevation={8}>
+                    <Box sx={{ p: 2 }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'left' }}>
+                            <TextField
+                                size='small'
+                                placeholder='Title'
+                                color='secondary'
+                                value={gsBookmarkTitle}
+                                onChange={handleNewGsBookmarkTitleChange}
+                                ref={titleInputRef}
+                                variant='standard'
+                                autoFocus={true} />
                         </Box>
-                    </Popover>
-                    {
-                        gsBookmarks.map((bookmark, index) => {
-                            return (
-                                <GsBookmarkCard
-                                    key={index}
-                                    id={bookmark.id as string}
-                                    params={bookmark.params as string}
-                                    title={bookmark.title as string}
-                                    active={bookmark.active as boolean}
-                                    shared={bookmark.shared as boolean}
-                                    handleGsParamsChange={handleGsParamsChange}
-                                    videoId={videoId} />
-                            );
-                        })
-                    }
-                </Box>
-                <GrooveScribe className='w-full h-full' params={gsParams} />
+                        <Button sx={{ mt: 2 }} fullWidth color='secondary' variant='outlined' onClick={handleSaveGsBookmark}>Save</Button>
+                    </Box>
+                </Popover>
+                {
+                    gsBookmarks.map((bookmark, index) => {
+                        return (
+                            <GsBookmarkCard
+                                key={index}
+                                id={bookmark.id as string}
+                                params={bookmark.params as string}
+                                title={bookmark.title as string}
+                                active={bookmark.active as boolean}
+                                shared={bookmark.shared as boolean}
+                                handleGsParamsChange={handleGsParamsChange}
+                                videoId={videoId} />
+                        );
+                    })
+                }
+            </Box>
+            <GrooveScribe className='w-full h-full' params={gsParams} />
         </Box>);
 };
