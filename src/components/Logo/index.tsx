@@ -1,6 +1,6 @@
 import React, { FC, ReactElement } from 'react'
 import Image from 'next/image'
-import logo from './logo-no-bg.png'
+import logo from '@/public/logo-no-bg.png'
 import { Box } from '@mui/material';
 
 import './Logo.css';

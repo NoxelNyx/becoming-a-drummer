@@ -132,14 +132,20 @@ export default function PracticePanel() {
                     sx={{
                         flexShrink: 0,
                         '& .MuiDrawer-paper': {
-                            width: 375,
-                            boxSizing: 'border-box',
-                            padding: '1rem'
+                            
                         },
                     }}
                     anchor="right"
                     open={open}
-                    variant="persistent">
+                    variant="persistent"
+                    PaperProps={{
+                        className: 'custom-scrollbar',
+                        sx: {
+                            width: 375,
+                            boxSizing: 'border-box',
+                            padding: '1rem'
+                        }
+                    }}>
                     <TabContext value={value}>
                         <AppBar position="static">
                             <TabList

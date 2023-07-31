@@ -12,6 +12,7 @@ import { Container, Grid } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Nav from '@/src/components/Nav';
 import PracticePanel from '@/src/components/PracticePanel';
+import HelpPanel from '@/src/components/HelpPanel';
 import { AuthContextProvider } from '@/src/firebase/provider';
 import { usePathname } from 'next/navigation';
 import NextNProgress from 'next-nprogress-bar';
@@ -74,6 +75,7 @@ export default function RootLayout({
                                     </Grid>
                                 </Container>
                                 <PracticePanel />
+                                <HelpPanel />
                             </LocalizationProvider>
                         </ProviderWrapper>
                     </ThemeProvider>
