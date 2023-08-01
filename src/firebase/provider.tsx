@@ -5,6 +5,7 @@ import {
     User
 } from 'firebase/auth';
 import firebase_app from './config';
+import Logo from '@/src/components/Logo';
 
 export const auth = getAuth(firebase_app);
 export const AuthContext = React.createContext<User | null>(null);
@@ -30,7 +31,13 @@ export const AuthContextProvider = ({
 
     return (
         <AuthContext.Provider value={user}>
-            {loading ? <div>Loading...</div> : children}
+            {loading 
+                ? <div style={{ backgroundColor: '#121212', height: '100vh' }}>
+                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                        <Logo sizes="100vh" height={500} className='mx-auto' />
+                    </div>
+                </div>
+                : children}
         </AuthContext.Provider>
     );
 };
