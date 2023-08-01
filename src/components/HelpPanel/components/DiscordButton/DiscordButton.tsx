@@ -20,7 +20,6 @@ export default function DiscordButton({ variant }: DiscordButtonProps) {
             zIndex: 9000,
         },
         discordBtn: {
-            backgroundColor: 'rgb(206, 147, 216)',
             color: '#fff',
             borderRadius: '3px',
             padding: '3px',
@@ -34,7 +33,7 @@ export default function DiscordButton({ variant }: DiscordButtonProps) {
                 ? <Box sx={styles.root}>
                     <Typography display={'inline-flex'} sx={{ marginLeft: '10px' }}>Need more assistance? Join our </Typography>
                     <Link href="https://discord.gg/JREku2XR5n" target='_blank'>
-                        <Button sx={styles.discordBtn} variant="outlined">
+                        <Button sx={styles.discordBtn} variant="outlined" color="secondary">
                             <Image src={DiscordLogoImage} alt="Discord Logo" height="40" />
                         </Button>
                     </Link>
