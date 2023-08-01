@@ -24,6 +24,7 @@ export default function DiscordButton({ variant }: DiscordButtonProps) {
             borderRadius: '3px',
             padding: '3px',
             marginLeft: '5px',
+            border: '1px solid rgba(206, 147, 216, 0)'
         }
     }
 
