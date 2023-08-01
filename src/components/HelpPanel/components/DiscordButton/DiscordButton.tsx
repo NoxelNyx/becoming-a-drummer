@@ -34,7 +34,7 @@ export default function DiscordButton({ variant }: DiscordButtonProps) {
                 ? <Box sx={styles.root}>
                     <Typography display={'inline-flex'} sx={{ marginLeft: '10px' }}>Need more assistance? Join our </Typography>
                     <Link href="https://discord.gg/JREku2XR5n" target='_blank'>
-                        <Button sx={styles.discordBtn} variant="contained">
+                        <Button sx={styles.discordBtn} variant="outlined">
                             <Image src={DiscordLogoImage} alt="Discord Logo" height="40" />
                         </Button>
                     </Link>
