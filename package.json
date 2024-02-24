@@ -24,6 +24,7 @@
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.6",
     "firebase": "^9.22.2",
+    "gh": "^2.8.9",
     "moment": "^2.29.4",
     "next": "^14.1.0",
     "next-nprogress-bar": "^1.2.5",
