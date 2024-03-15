@@ -31,7 +31,7 @@ const ProjectTab: FC<ProjectTabProps> = ({ project, handleProjectDelete, handleP
         router.push('/project/' + project.id);
     };
 
-    const handleRightClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handleRightClick = (e: React.MouseEvent) => {
         e.preventDefault();
 
         setContextMenu(
@@ -85,8 +85,7 @@ const ProjectTab: FC<ProjectTabProps> = ({ project, handleProjectDelete, handleP
                 wrapped={false}
                 onClick={handleOnClick}
                 icon={<YouTube />}
-                iconPosition='start'>
-            </Tab>
+                iconPosition='start' />
             <Menu
                 open={menuOpen}
                 onClose={handleContextClose}
