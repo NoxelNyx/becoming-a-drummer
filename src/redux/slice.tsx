@@ -1,36 +1,30 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from './store';
-import { User } from 'firebase/auth';
-import { YouTubePlayer } from 'react-youtube';
+import Project from '@/src/interfaces/Project';
 
 export interface SharedState {
-    currentVideoId?: string,
-    currentVideoTitle?: string
+    currentProject: Project | undefined;
 };
 
 export const initialState: SharedState = {
-    currentVideoId: undefined,
-    currentVideoTitle: undefined
+    currentProject: undefined
 };
 
 export const sharedSlice = createSlice({
     name: 'shared',
     initialState,
     reducers: {
-        setCurrentVideoId: (state, action: PayloadAction<string>) => {
-            state.currentVideoId = action.payload;
+        setCurrentProject: (state, action: PayloadAction<Project>) => {
+            state.currentProject = action.payload;
         },
-        setCurrentVideoTitle: (state, action: PayloadAction<string>) => {
-            state.currentVideoTitle = action.payload;
-        }
     }
 });
 
 export const selectSharedState = (state: AppState) => state.shared;
+export const selectCurrentProject = (state: AppState) => state.shared.currentProject;
 
 export const {
-    setCurrentVideoId,
-    setCurrentVideoTitle
+    setCurrentProject
 } = sharedSlice.actions;
 
 export default sharedSlice.reducer;

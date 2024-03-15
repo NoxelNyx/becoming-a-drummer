@@ -1,51 +1,35 @@
 import React from 'react';
-import { Box, Typography, Fab, Popover, TextField, Button } from '@mui/material';
-import GrooveScribe from './components/GrooveScribe';
+import { Box, Fab, Popover, TextField, Button } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import GsBookmarkCard from './components/GsBookmark';
-import { selectLessonPanelState, getGsBookmarksAsync, addGsBookmarkAsync } from './slice';
-import { useAppSelector, useAppDispatch } from '@/src/redux/hooks';
+import { useAppDispatch } from '@/src/redux/hooks';
 import { useAuthContext } from '@/src/firebase/provider';
 import { baseGsUrl } from './components/GrooveScribe';
+import { setProjectAsync, setProjectLocal } from '../ProjectNav/slice';
+import GsBookmarkCard from './components/GsBookmark';
+import GrooveScribe from './components/GrooveScribe';
+import Project from '@/src/interfaces/Project';
+import GSBookmark from '@/src/interfaces/GSBookmark';
 
-interface TabPanelProps {
-    children?: React.ReactNode;
-    dir?: string;
-    index: number;
-    value: number;
-}
+type LessonPanelProps = {
+    project: Project
+    className?: string
+};
 
-function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <Typography
-            component="div"
-            role="tabpanel"
-            hidden={value !== index}
-            {...other}
-            className='h-full w-full' >
-            <Box className='h-full'>{children}</Box>
-        </Typography>
-    );
-}
-
-function a11yProps(index: number) {
-    return {
-        id: `full-width-tab-${index}`,
-        'aria-controls': `full-width-tabpanel-${index}`,
-    };
-}
-
-export default function LessonPanel({ className, videoId }: { className?: string, videoId?: string }) {
+export default function LessonPanel({ className, project }: LessonPanelProps) {
     const [gsParams, setGsParams] = React.useState('');
     const [popoverAnchorEl, setPopoverAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-    const [gsBookmarkTitle, setGsBookmarkTitle] = React.useState<string | null>(null);
+    const [gsBookmarkTitle, setGsBookmarkTitle] = React.useState<string | null>('');
     const [gsBookmarkParams, setGsBookmarkParams] = React.useState<string>('');
     const titleInputRef = React.useRef<HTMLInputElement>(null);
-    const { gsBookmarks } = useAppSelector(selectLessonPanelState);
     const dispatch = useAppDispatch();
     const user = useAuthContext();
+
+    React.useEffect(() => {
+        const activeGsBookmark = project.gsBookmarks?.find((bookmark: GSBookmark) => bookmark.active);
+
+        if (activeGsBookmark)
+            setGsParams(activeGsBookmark.params as string);
+    }, [project.gsBookmarks]);
 
     const handlePopoverOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         const callback = (event: MessageEvent) => {
@@ -73,18 +57,66 @@ export default function LessonPanel({ className, videoId }: { className?: string
         setGsBookmarkTitle(event.target.value);
     };
 
+    const handleDeleteGsBookmark = (index: number) => {
+        const updatedGsBookmarks = project.gsBookmarks?.filter((bookmark, i) => i !== index);
+
+        dispatch(setProjectAsync({
+            uid: user?.uid as string,
+            project: {
+                ...project,
+                gsBookmarks: updatedGsBookmarks
+            }
+        }));
+    }
+
     const handleSaveGsBookmark = () => {
         handlePopoverClose();
 
         if (gsBookmarkTitle) {
-            dispatch(addGsBookmarkAsync({ uid: user?.uid as string, newGsBookmark: { videoId: videoId, title: gsBookmarkTitle, params: gsBookmarkParams } }));
+            const newGsBookmark = { title: gsBookmarkTitle, params: gsBookmarkParams };
+
+            dispatch(setProjectAsync({
+                uid: user?.uid as string,
+                project: {
+                    ...project,
+                    gsBookmarks: [
+                        ...project.gsBookmarks || [],
+                        newGsBookmark
+                    ]
+                }
+            }));
+
             setGsBookmarkTitle(null);
         }
     };
 
-    React.useEffect(() => {
-        dispatch(getGsBookmarksAsync({ uid: user?.uid as string, videoId: videoId as string }));
-    }, [dispatch, videoId, user?.uid]);
+    const deactivateGsBookmarks = () => {
+        const updatedGsBookmarks = project.gsBookmarks?.map((bookmark: GSBookmark) => {
+            return { ...bookmark, active: false };
+        });
+
+        dispatch(setProjectLocal({
+            ...project,
+            gsBookmarks: updatedGsBookmarks
+        }));
+
+        handleGsParamsChange('');
+    };
+
+    const activateGsBookmark = (index: number) => {
+        const bookmark = project.gsBookmarks?.[index];
+
+        deactivateGsBookmarks();
+
+        dispatch(setProjectLocal({
+            ...project,
+            gsBookmarks: project.gsBookmarks?.map((bookmark, i) => {
+                return { ...bookmark, active: i === index };
+            })
+        }));
+
+        handleGsParamsChange(bookmark.params || '');
+    };
 
     const open = Boolean(popoverAnchorEl);
 
@@ -124,21 +156,21 @@ export default function LessonPanel({ className, videoId }: { className?: string
                     </Box>
                 </Popover>
                 {
-                    gsBookmarks.map((bookmark, index) => {
+                    project.gsBookmarks?.map((bookmark, index) => {
                         return (
                             <GsBookmarkCard
                                 key={index}
-                                id={bookmark.id as string}
-                                params={bookmark.params as string}
                                 title={bookmark.title as string}
                                 active={bookmark.active as boolean}
-                                shared={bookmark.shared as boolean}
-                                handleGsParamsChange={handleGsParamsChange}
-                                videoId={videoId} />
+                                index={index}
+                                deactivateGsBookmarks={deactivateGsBookmarks}
+                                activateGsBookmark={activateGsBookmark}
+                                handleDeleteBookmark={handleDeleteGsBookmark} />
                         );
                     })
                 }
             </Box>
             <GrooveScribe className='w-full h-full' params={gsParams} />
-        </Box>);
+        </Box>
+    );
 };

@@ -10,8 +10,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Container, Grid } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
-import Nav from '@/src/components/Nav';
-import PracticePanel from '@/src/components/PracticePanel';
+import ProjectNav from '@/src/components/ProjectNav';
 import HelpPanel from '@/src/components/HelpPanel';
 import { AuthContextProvider } from '@/src/firebase/provider';
 import { usePathname } from 'next/navigation';
@@ -67,14 +66,13 @@ export default function RootLayout({
                                 <Container className="App h-screen" maxWidth="xl">
                                     <Grid container className={pathname === '/' ? 'h-screen' : ''}>
                                         <Grid item xs={12} className="max-h-20">
-                                            <Nav />
+                                            <ProjectNav />
                                         </Grid>
                                         <Grid item xs={12}>
                                             {children}
                                         </Grid>
                                     </Grid>
                                 </Container>
-                                <PracticePanel />
                                 <HelpPanel />
                             </LocalizationProvider>
                         </ProviderWrapper>

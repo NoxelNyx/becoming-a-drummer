@@ -12,12 +12,10 @@ export interface GoogleVideo {
 };
 
 export interface SearchState {
-    query?: string,
     videos: GoogleVideo[]
 };
 
 const initialState: SearchState = {
-    query: '',
     videos: [] as GoogleVideo[]/*{
         id: {
             videoId: 'woI6t8dCQcQ'
@@ -53,8 +51,8 @@ export const searchSlice = createSlice({
     name: 'search',
     initialState,
     reducers: {
-        setQuery: (state, action: PayloadAction<string>) => {
-            state.query = action.payload;
+        resetVideos: (state) => {
+            state.videos = [] as GoogleVideo[];
         }
     },
     extraReducers: (builder) => {
@@ -69,7 +67,7 @@ export const searchSlice = createSlice({
 export const selectSearchState = (state: AppState) => state.search;
 
 export const {
-    setQuery
+    resetVideos
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

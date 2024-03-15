@@ -2,18 +2,18 @@
 
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import sharedReducer from './slice';
-import searchReducer from '@/src/components/Nav/components/SearchBar/slice';
 import practicePanelReducer from '@/src/components/PracticePanel/slice';
-import videoEmbedReducer from '@/src/components/VideoEmbed/slice';
 import lessonPanelReducer from '@/src/components/LessonPanel/slice';
+import projectNavReducer from '@/src/components/ProjectNav/slice';
+import searchState from '@/src/components/SearchBar/slice';
 
 export const store = configureStore({
     reducer: {
         shared: sharedReducer,
-        search: searchReducer,
         practicePanel: practicePanelReducer,
-        videoEmbed: videoEmbedReducer,
         lessonPanel: lessonPanelReducer,
+        projectNav: projectNavReducer,
+        search: searchState
     },
 })
 

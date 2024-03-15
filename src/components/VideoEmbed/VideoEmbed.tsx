@@ -7,30 +7,12 @@ import { useAuthContext } from '@/src/firebase/provider';
 import SectionCard from './components/SectionCard';
 import dayjs from 'dayjs';
 import { getCurrentBreakpoint } from '@/app/layout';
-import {
-    selectPracticePanelState,
-    addBookmarkAsync,
-    Bookmark as BookmarkType,
-    deleteBookmarkAsync
-} from '../PracticePanel/slice';
-import {
-    Section,
-    selectVideoEmbedState,
-    deactivateSections,
-    addLocalSection,
-    getSectionsAsync,
-} from './slice';
-import { setCurrentVideoTitle, selectSharedState } from '@/src/redux/slice';
+import { setProjectLocal, setProjectAsync } from '@/src/components/ProjectNav/slice';
+import Section from '@/src/interfaces/Section';
+import Project from '@/src/interfaces/Project';
 
 type VideoEmbedProps = {
-    videoId: string
-};
-
-const styles = {
-    bookmarkBtn: {
-        mb: 2,
-        mr: .1
-    }
+    project: Project
 };
 
 const videoSizes = {
@@ -56,100 +38,131 @@ const videoSizes = {
     }
 };
 
-const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
-    let playerRef = React.useRef<any>(null);
-    let bookmarkRef = React.useRef<BookmarkType | null>(null);
-    const [loaded, setLoaded] = useState<boolean>(false);
+const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
+    const dispatch = useAppDispatch();
+    const theme = useTheme();
+    const user = useAuthContext();
+    const currentBreakpoint = getCurrentBreakpoint();
     const [playbackRate, setPlaybackRate] = useState<number>(1);
     const [recording, setRecording] = useState<boolean>(false);
     const [newSectionStartTime, setNewSectionStartTime] = useState<number>(0);
-    const { bookmarks } = useAppSelector(selectPracticePanelState);
-    const { sections } = useAppSelector(selectVideoEmbedState);
-    const dispatch = useAppDispatch();
-    const user = useAuthContext();
-    const currentBreakpoint = getCurrentBreakpoint();
-    const theme = useTheme();
+    const [playerRef, setPlayerRef] = useState<any>(null);
+
     const options = {
         height: videoSizes[currentBreakpoint].height,
         width: videoSizes[currentBreakpoint].width,
     };
 
-    const bookmarked = bookmarks.filter((bookmark: BookmarkType) => {
-        if (bookmark.videoId === videoId) {
-            bookmarkRef.current = bookmark;
-
-            return true;
-        }
-
-        return false;
-    }).length > 0;
-
     const increasePlaybackRate = async () => {
-        const currentRate = await playerRef.current?.getPlaybackRate() as number;
+        const currentRate = await playerRef.getPlaybackRate() as number;
         const newRate = Math.round((currentRate + .05) * 100) / 100;
 
-        playerRef.current?.setPlaybackRate(newRate);
+        playerRef.setPlaybackRate(newRate);
         setPlaybackRate(newRate);
     };
 
     const decreasePlaybackRate = async () => {
-        const currentRate = await playerRef.current?.getPlaybackRate() as number;
+        const currentRate = await playerRef.getPlaybackRate() as number;
         const newRate = Math.round((currentRate - .05) * 100) / 100;
 
-        playerRef.current?.setPlaybackRate(newRate);
+        playerRef.setPlaybackRate(newRate);
         setPlaybackRate(newRate);
     };
 
     const onPlayerReady = (e: YouTubeEvent) => {
-        playerRef.current = e.target;
-
-        if (!loaded) {
-            setLoaded(true);
-            dispatch(getSectionsAsync({ uid: user?.uid as string, videoId: videoId as string }));
-        }
-
-        dispatch(setCurrentVideoTitle(playerRef.current.getVideoData().title));
+        setPlayerRef(e.target);
     };
 
-    const resetSections = () => {
-        dispatch(deactivateSections());
+    const activateSection = (index: number) => {
+        const newSections = project.sections?.map((s, i) => {
+            const newSection = { ...s };
+
+            if (i === index)
+                newSection.active = true;
+            else
+                newSection.active = false;
+
+            return newSection;
+        });
+
+        dispatch(setProjectLocal({
+            ...project,
+            sections: newSections
+        }));
     };
 
-    const onBookmarkClick = () => {
-        if (bookmarked)
-            dispatch(deleteBookmarkAsync({
-                uid: user?.uid as string,
-                bookmarkId: bookmarkRef.current?.id as string
-            }));
-        else
-            dispatch(addBookmarkAsync({
-                uid: user?.uid as string,
-                newBookmark: {
-                    videoId: videoId as string,
-                    title: playerRef.current.getVideoData().title,
-                    duration: playerRef.current.getDuration(),
-                }
-            }));
+    const deactivateSections = () => {
+        const newSections = project.sections?.map((s) => {
+            const newSection = { ...s, active: false };
+            return newSection;
+        });
+
+        dispatch(setProjectLocal({
+            ...project,
+            sections: newSections
+        }));
     };
 
     const handleNewSectionClick = () => {
         const startMillisecond = dayjs(newSectionStartTime).valueOf() * 1000;
 
         if (recording) {
-            const endMillisecond = dayjs(playerRef.current.getCurrentTime()).valueOf() * 1000;
+            const endMillisecond = dayjs(playerRef.getCurrentTime()).valueOf() * 1000;
 
             setRecording(false);
-            dispatch(addLocalSection({
-                start: startMillisecond,
-                end: endMillisecond,
-                repeat: true,
-                active: false,
-                defaultEdit: true
+            dispatch(setProjectLocal({ 
+                ...project,
+                sections: [
+                    ...project.sections || [],
+                    {
+                        isLocal: true,
+                        start: startMillisecond, 
+                        end: endMillisecond,
+                        repeat: true,
+                        active: false,
+                        defaultEdit: true
+                    }
+                ]
             }));
         } else {
             setRecording(true);
-            setNewSectionStartTime(playerRef.current.getCurrentTime());
+            setNewSectionStartTime(playerRef.getCurrentTime());
         }
+    };
+
+    const handleSaveSection = async (section: Section, index: number) => {
+        const newSections = project.sections.map((s, i) => {
+            if (i === index)
+                return section;
+
+            return s;
+        });
+
+        await dispatch(setProjectAsync({
+            uid: user?.uid as string,
+            project: {
+                ...project,
+                sections: newSections
+            } 
+        }));
+    };
+
+    const handleRemoveSection = async (index: number, isLocal: boolean) => {
+        const newSections = project.sections.filter((s, i) => i !== index);
+
+        if (isLocal)
+            dispatch(setProjectLocal({
+                ...project,
+                sections: newSections
+            }));
+        else
+            await dispatch(setProjectAsync({
+                uid: user?.uid as string,
+                project: {
+                    ...project,
+                    sections: newSections
+                }
+            }));
     };
 
     return (
@@ -173,20 +186,23 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
                     </Button>
                     <Box overflow={'scroll'} maxHeight={425} sx={{ overflowX: 'visible' }} className='hide-scrollbar'>
                         <Stack spacing={2}>
-                            {
-                                sections.map((section: Section, index: number) => {
+                            {playerRef &&
+                                project.sections?.map((section: Section, index: number) => {
                                     return (
                                         <SectionCard
-                                            key={section.id}
-                                            id={section.id as string}
+                                            key={index}
                                             start={section.start as number}
                                             end={section.end as number}
-                                            playerRef={playerRef.current}
+                                            playerRef={playerRef}
                                             active={section.active as boolean}
                                             playbackRate={playbackRate}
                                             index={index}
-                                            videoId={videoId}
-                                            defaultEdit={section.defaultEdit} />
+                                            defaultEdit={section.defaultEdit}
+                                            isLocal={section.isLocal}
+                                            handleSaveSection={handleSaveSection}
+                                            handleRemoveSection={handleRemoveSection}
+                                            deactivateSections={deactivateSections}
+                                            activateSection={activateSection} />
                                     );
                                 })
                             }
@@ -196,29 +212,18 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ videoId }) => {
             }
             <Box className="video-container" display='inline-block'>
                 <Box display='inline-block' justifyContent='space-between'>
-                    <YouTube
-                        opts={options}
-                        videoId={videoId as string}
-                        iframeClassName='mx-auto'
-                        className='inline-block'
-                        onReady={onPlayerReady}
-                        onPause={resetSections}
-                        onEnd={resetSections} />
+                    {project.videoId &&
+                        <YouTube
+                            opts={options}
+                            videoId={project.videoId as string}
+                            iframeClassName='mx-auto'
+                            className='inline-block'
+                            onReady={onPlayerReady}
+                            onPause={deactivateSections}
+                            onEnd={deactivateSections} />
+                    }
                 </Box>
                 <Box className='action-buttons align-top' display='inline-block' justifyContent='space-between' flexDirection='column'>
-                    <Box>
-                        <IconButton
-                            aria-label="bookmark"
-                            size="large"
-                            sx={styles.bookmarkBtn}
-                            onClick={onBookmarkClick}
-                            edge="end">
-                            {bookmarked
-                                ? <Bookmark color='secondary' />
-                                : <BookmarkBorder color='secondary' />
-                            }
-                        </IconButton>
-                    </Box>
                     <Box>
                         <Button onClick={increasePlaybackRate} color="secondary" variant='outlined' sx={{ mx: 2, mb: 1 }}>+</Button>
                         <br />

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import Logo from '@/src/components/Logo';
 import LoginCard from '@/src/components/LoginCard';
 import { useAuthContext } from '@/src/firebase/provider';

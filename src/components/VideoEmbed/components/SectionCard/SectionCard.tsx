@@ -1,33 +1,45 @@
-import { activateSection, deactivateSections, addSectionAsync, updateSectionAsync, deleteLocalSection, deleteSectionAsync } from '@/src/components/VideoEmbed/slice';
-import { useAppDispatch } from '@/src/redux/hooks';
 import { Delete, Edit, Check } from '@mui/icons-material';
 import { Box, Card, CardActionArea, CardContent, IconButton } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers';
 import React from 'react';
 import { YouTubePlayer } from 'react-youtube';
-import { useAuthContext } from '@/src/firebase/provider';
 import dayjs, { Dayjs } from 'dayjs';
+import Section from '@/src/interfaces/Section';
 
 interface SectionCardProps {
-    id: string,
     start: number,
     end: number,
     active: boolean,
     playerRef: YouTubePlayer,
     playbackRate: number,
-    videoId: string,
     index: number,
-    defaultEdit?: boolean
+    defaultEdit?: boolean,
+    isLocal: boolean,
+    handleSaveSection: (section: Section, index: number) => void,
+    handleRemoveSection: (index: number, isLocal: boolean) => void,
+    deactivateSections: () => void,
+    activateSection: (index: number) => void
 };
 
-export default function SectionCard({ id, start, end, playerRef, active, playbackRate, videoId, index, defaultEdit }: SectionCardProps) {
+export default function SectionCard({ 
+    start,
+    end,
+    playerRef,
+    active,
+    playbackRate,
+    index,
+    defaultEdit,
+    isLocal,
+    handleSaveSection,
+    handleRemoveSection,
+    deactivateSections,
+    activateSection
+}: SectionCardProps) {
     let timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
     let activeRef = React.useRef<boolean>(active);
     const [editEnabled, setEditEnabled] = React.useState(defaultEdit || false);
     const [newStart, setNewStart] = React.useState<Dayjs | null>(dayjs(start));
     const [newEnd, setNewEnd] = React.useState<Dayjs | null>(dayjs(end));
-    const dispatch = useAppDispatch();
-    const user = useAuthContext();
 
     const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -39,22 +51,19 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
         e.stopPropagation();
         setEditEnabled(false);
 
-        if (id) {
-            if (newStart?.valueOf() !== start || newEnd?.valueOf() !== end)
-                dispatch(updateSectionAsync({ uid: user?.uid as string, section: { id, start: newStart?.valueOf(), end: newEnd?.valueOf(), videoId } }));
-        } else {
-            dispatch(addSectionAsync({ uid: user?.uid as string, newSection: { start: newStart?.valueOf(), end: newEnd?.valueOf(), active: false, videoId } }));
-            dispatch(deleteLocalSection(index));
-        }
+        if (newStart?.valueOf() !== start || newEnd?.valueOf() !== end || isLocal)
+            handleSaveSection({
+                isLocal: false,
+                start: newStart?.valueOf() as number,
+                end: newEnd?.valueOf() as number,
+                active
+            }, index);
     };
 
     const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
-
-        if (id)
-            dispatch(deleteSectionAsync({ uid: user?.uid as string, sectionId: id }));
-        else
-            dispatch(deleteLocalSection(index));
+        
+        handleRemoveSection(index, isLocal);
     };
 
     const handleSpaceKey = React.useCallback((e: KeyboardEvent) => {
@@ -63,11 +72,11 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
             e.stopPropagation();
 
             if (active)
-                dispatch(deactivateSections());
+                deactivateSections();
             else
-                dispatch(activateSection(id));
+                activateSection(index);
         }
-    }, [dispatch, id]); // eslint-disable-line
+    }, [active, activateSection, deactivateSections, index]);
 
     const handleStateChange = React.useCallback((e: any) => {
         if (e.data === 2 || e.data === 0)
@@ -85,19 +94,23 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
 
     const handleClick = React.useCallback(() => {
         if (editEnabled) return;
+        if (playerRef === null) {
+            activateSection(index);
+            deactivateSections();
+        }
 
         window.removeEventListener('keydown', handleSpaceKey);
         window.addEventListener('keydown', handleSpaceKey);
 
         if (active) {
-            dispatch(deactivateSections());
+            deactivateSections();
             activeRef.current = false;
 
             clearTimeout(timeoutRef.current);
             playerRef.removeEventListener('onStateChange', handleStateChange);
             playerRef.pauseVideo();
         } else {
-            dispatch(activateSection(id));
+            activateSection(index);
             activeRef.current = true;
 
             playerRef.removeEventListener('onStateChange', handleStateChange);
@@ -108,7 +121,7 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
 
             playerRef.addEventListener('onStateChange', handleStateChange);
         }
-    }, [dispatch, editEnabled, handleSpaceKey, id, playerRef, start, handleStateChange, active, setRepeat]);
+    }, [editEnabled, handleSpaceKey, playerRef, start, handleStateChange, active, setRepeat, deactivateSections, activateSection, index]);
 
     return (
         <Box>
@@ -116,7 +129,8 @@ export default function SectionCard({ id, start, end, playerRef, active, playbac
                 onClick={handleClick}
                 variant={active ? 'outlined' : 'elevation'}
                 color={active ? 'secondary' : 'primary'}
-                elevation={active ? 0 : 3}>
+                elevation={active ? 0 : 3}
+                sx={{ cursor: 'pointer' }}>
                 <CardActionArea>
                     <CardContent sx={{ p: 0, pl: 1.5 }}>
                         <Box sx={{ float: 'left', mt: '.4rem' }} display={'inline-block'}>

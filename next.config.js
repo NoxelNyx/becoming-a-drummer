@@ -10,7 +10,8 @@ const nextConfig = {
     },
     env: {
         NEXT_PUBLIC_YT_API_KEY: process.env.NEXT_PUBLIC_YT_API_KEY
-    }
+    },
+    reactStrictMode: false
 };
 
 module.exports = nextConfig;
