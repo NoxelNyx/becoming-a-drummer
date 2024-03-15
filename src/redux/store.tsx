@@ -2,7 +2,6 @@
 
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import sharedReducer from './slice';
-import practicePanelReducer from '@/src/components/PracticePanel/slice';
 import lessonPanelReducer from '@/src/components/LessonPanel/slice';
 import projectNavReducer from '@/src/components/ProjectNav/slice';
 import searchState from '@/src/components/SearchBar/slice';
@@ -10,7 +9,6 @@ import searchState from '@/src/components/SearchBar/slice';
 export const store = configureStore({
     reducer: {
         shared: sharedReducer,
-        practicePanel: practicePanelReducer,
         lessonPanel: lessonPanelReducer,
         projectNav: projectNavReducer,
         search: searchState
