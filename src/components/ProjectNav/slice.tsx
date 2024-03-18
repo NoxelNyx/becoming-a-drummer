@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk, current } from '@reduxjs/toolkit';
 import { AppState } from '@/src/redux/store';
-import { fetchProjects, setProject, addProject, deleteProject } from './api';
+import { fetchProject, fetchProjects, setProject, addProject, deleteProject } from './api';
 import Project from '@/src/interfaces/Project';
 
 export interface ProjectNavState {
@@ -11,7 +11,14 @@ const initialState: ProjectNavState = {
     projects: []
 };
 
-export const getProjectsAsync = createAsyncThunk(
+export const fetchProjectAsync = createAsyncThunk(
+    'project/fetch',
+    async (args: { uid: string, id: string }) => {
+        return await fetchProject(args.uid, args.id);
+    }
+);
+
+export const fetchProjectsAsync = createAsyncThunk(
     'projects/fetch',
     async (uid: string) => {
         return await fetchProjects(uid);
@@ -50,7 +57,7 @@ export const projectNavSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(getProjectsAsync.fulfilled, (state, action) => {
+        builder.addCase(fetchProjectsAsync.fulfilled, (state, action) => {
             state.projects = action.payload as Project[];
         })
         .addCase(setProjectAsync.fulfilled, (state, action) => {

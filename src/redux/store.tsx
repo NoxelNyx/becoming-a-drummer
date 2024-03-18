@@ -4,14 +4,16 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import sharedReducer from './slice';
 import lessonPanelReducer from '@/src/components/LessonPanel/slice';
 import projectNavReducer from '@/src/components/ProjectNav/slice';
-import searchState from '@/src/components/SearchBar/slice';
+import searchReducer from '@/src/components/SearchBar/slice';
+import shareDialogReducer from '@/src/components/ShareDialog/slice';
 
 export const store = configureStore({
     reducer: {
         shared: sharedReducer,
         lessonPanel: lessonPanelReducer,
         projectNav: projectNavReducer,
-        search: searchState
+        search: searchReducer,
+        shareDialog: shareDialogReducer,
     },
 })
 

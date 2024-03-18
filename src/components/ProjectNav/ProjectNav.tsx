@@ -14,13 +14,14 @@ import { Menu, MenuItem, ListItemIcon, Popover, Box, Input } from '@mui/material
 import { Logout, Key } from '@mui/icons-material';
 
 import {
-    getProjectsAsync,
+    fetchProjectsAsync,
     setProjectAsync,
     addProjectAsync,
     deleteProjectAsync,
     selectProjectNavState
 } from './slice';
 import Project from '@/src/interfaces/Project';
+import ShareDialog from '../ShareDialog';
 
 type ProjectNavProps = {
     className?: string
@@ -37,13 +38,22 @@ const ProjectNav: FC<ProjectNavProps> = ({ className }): ReactElement => {
     const [popoverAnchorEl, setPopoverAnchorEl] = React.useState<null | HTMLElement>(null);
     const [popoverOpen, setPopoverOpen] = React.useState(false);
     const [projectLauncherOpen, setProjectLauncherOpen] = React.useState(false);
+    const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
+    const [selectedProjectShare, setSelectedProjectShare] = React.useState<Project | null>(null);
     const [apiKey, setApiKey] = React.useState(localStorage.getItem('yt_api_key') || '');
     const { projectId: activeProjectId } = useParams();
 
     React.useEffect(() => {
         if (user !== null)
-            dispatch(getProjectsAsync(user.uid));
+            dispatch(fetchProjectsAsync(user.uid));
     }, [user, dispatch]);
+
+    React.useEffect(() => {
+        if (shareDialogOpen) {
+            const updatedProject = projects.find(project => project.id === selectedProjectShare?.id);
+            setSelectedProjectShare(updatedProject || null);
+        }
+    }, [projects, shareDialogOpen, selectedProjectShare]);
 
     const handleSignOut = () => {
         setMenuOpen(false);
@@ -103,11 +113,15 @@ const ProjectNav: FC<ProjectNavProps> = ({ className }): ReactElement => {
                 type: projectType,
                 sections: [],
                 gsBookmarks: [],
+                shared: false,
+                sharedWith: [{ id: user.uid, email: user.email || '', isOwner: true }],
+                sharedWithIds: [],
+                inContentLibrary: false
             } 
         })) as any;
 
         router.push(`/project/${res.payload.id}`);
-    }
+    };
 
     const handleProjectDelete = async (id: string) => {
         if (user === null) return;
@@ -116,7 +130,7 @@ const ProjectNav: FC<ProjectNavProps> = ({ className }): ReactElement => {
             router.push('/');
 
         await dispatch(deleteProjectAsync({ uid: user.uid, id }));
-    }
+    };
 
     const handleProjectClose = async (project: Project) => {
         if (user === null) return;
@@ -125,7 +139,17 @@ const ProjectNav: FC<ProjectNavProps> = ({ className }): ReactElement => {
             router.push('/');
 
         await dispatch(setProjectAsync({ uid: user.uid, project: { ...project, open: false } }));
-    }
+    };
+
+    const handleProjectShare = (project: Project) => {
+        setSelectedProjectShare(project);
+        setShareDialogOpen(true);
+    };
+
+    const handleShareDialogClose = () => {
+        setSelectedProjectShare(null);
+        setShareDialogOpen(false);
+    };
 
     return (
         <React.Fragment>
@@ -143,7 +167,8 @@ const ProjectNav: FC<ProjectNavProps> = ({ className }): ReactElement => {
                         <Tabs 
                             sx={{ marginBottom: '-15px', maxWidth: '85%' }}
                             variant="scrollable"
-                            scrollButtons="auto">
+                            scrollButtons="auto"
+                            value={false}>
                             {projects.map((project, index) => {
                                 if (project.open)
                                     return (
@@ -151,7 +176,8 @@ const ProjectNav: FC<ProjectNavProps> = ({ className }): ReactElement => {
                                             key={index}
                                             project={project}
                                             handleProjectDelete={handleProjectDelete}
-                                            handleProjectClose={handleProjectClose} />
+                                            handleProjectClose={handleProjectClose}
+                                            handleProjectShare={handleProjectShare} />
                                     )}
                             )}
                         </Tabs>
@@ -205,6 +231,10 @@ const ProjectNav: FC<ProjectNavProps> = ({ className }): ReactElement => {
                 handleProjectOpen={handleProjectOpen}
                 handleProjectLauncherClose={handleProjectLauncherClose}
                 handleProjectCreate={handleProjectCreate} />
+            <ShareDialog
+                open={shareDialogOpen}
+                project={selectedProjectShare as Project}
+                handleShareDialogClose={handleShareDialogClose} />
         </React.Fragment>
     );
 };

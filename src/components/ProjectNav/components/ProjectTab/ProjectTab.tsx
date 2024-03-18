@@ -4,15 +4,17 @@ import { useRouter, useParams } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { setCurrentProject } from '@/src/redux/slice';
 import Project from '@/src/interfaces/Project';
-import { YouTube, Delete, Close } from '@mui/icons-material';
+import { YouTube, Delete, Close, ShareOutlined } from '@mui/icons-material';
+import { useAuthContext } from '@/src/firebase/provider';
 
 type ProjectTabProps = {
     project: Project,
     handleProjectDelete: (id: string) => void
-    handleProjectClose: (project: Project) => void
+    handleProjectClose: (project: Project) => void,
+    handleProjectShare: (project: Project) => void
 };
 
-const ProjectTab: FC<ProjectTabProps> = ({ project, handleProjectDelete, handleProjectClose }): ReactElement => {
+const ProjectTab: FC<ProjectTabProps> = ({ project, handleProjectDelete, handleProjectClose, handleProjectShare }): ReactElement => {
     const theme = useTheme();
     const router = useRouter();
     const dispatch = useDispatch();
@@ -24,6 +26,7 @@ const ProjectTab: FC<ProjectTabProps> = ({ project, handleProjectDelete, handleP
         mouseY: number;
       } | null>(null);
     const menuOpen = Boolean(contextMenu);
+    const user = useAuthContext();
 
     const handleOnClick = () => {
         dispatch(setCurrentProject(project));
@@ -65,7 +68,12 @@ const ProjectTab: FC<ProjectTabProps> = ({ project, handleProjectDelete, handleP
     const handleConfirmationYes = () => {
         handleProjectDelete(project.id);
         setConfirmationOpen(false);
-    }
+    };
+
+    const handleShareClick = () => {
+        handleProjectShare(project);
+        handleContextClose();
+    };
 
     return (
         <React.Fragment>
@@ -101,6 +109,12 @@ const ProjectTab: FC<ProjectTabProps> = ({ project, handleProjectDelete, handleP
                         <Close fontSize="small" />
                     </ListItemIcon>
                     <Typography variant="inherit">Close</Typography>
+                </MenuItem>
+                <MenuItem onClick={handleShareClick}>
+                    <ListItemIcon>
+                        <ShareOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <Typography variant="inherit">Share</Typography>
                 </MenuItem>
                 <MenuItem onClick={handleDeleteClick}>
                     <ListItemIcon>

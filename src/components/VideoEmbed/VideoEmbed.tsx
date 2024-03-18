@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Button, Typography, IconButton, Box, Stack, useTheme, useMediaQuery } from '@mui/material';
-import { Bookmark, BookmarkBorder, FiberManualRecord, Pause } from '@mui/icons-material';
+import { Bookmark, BookmarkBorder, FiberManualRecord, Pause, Share, ShareOutlined } from '@mui/icons-material';
 import YouTube, { YouTubeEvent } from 'react-youtube';
 import { useAppSelector, useAppDispatch } from '@/src/redux/hooks';
 import { useAuthContext } from '@/src/firebase/provider';
@@ -10,6 +10,7 @@ import { getCurrentBreakpoint } from '@/app/layout';
 import { setProjectLocal, setProjectAsync } from '@/src/components/ProjectNav/slice';
 import Section from '@/src/interfaces/Section';
 import Project from '@/src/interfaces/Project';
+import ShareDialog from '../ShareDialog';
 
 type VideoEmbedProps = {
     project: Project
@@ -47,6 +48,7 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
     const [recording, setRecording] = useState<boolean>(false);
     const [newSectionStartTime, setNewSectionStartTime] = useState<number>(0);
     const [playerRef, setPlayerRef] = useState<any>(null);
+    const [shareDialogOpen, setShareDialogOpen] = useState<boolean>(false);
 
     const options = {
         height: videoSizes[currentBreakpoint].height,
@@ -165,6 +167,14 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
             }));
     };
 
+    const handleShareClick = () => {
+        setShareDialogOpen(true);
+    };
+
+    const handleShareDialogClose = () => {
+        setShareDialogOpen(false);
+    };
+
     return (
         <Box className="video-embed" display='flex' justifyContent={'center'} pr={{ lg: 0, xl: 18 }}>
             {useMediaQuery(theme.breakpoints.up('md')) &&
@@ -224,15 +234,21 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
                     }
                 </Box>
                 <Box className='action-buttons align-top' display='inline-block' justifyContent='space-between' flexDirection='column'>
-                    <Box>
+                    <Stack>
+                        <IconButton 
+                            sx={{ marginBottom: 2, alignSelf: 'center' }}
+                            color='secondary'>
+                            <ShareOutlined onClick={handleShareClick} />
+                        </IconButton>
                         <Button onClick={increasePlaybackRate} color="secondary" variant='outlined' sx={{ mx: 2, mb: 1 }}>+</Button>
-                        <br />
                         <Typography variant='h6' component='span'>{playbackRate}</Typography>
-                        <br />
                         <Button onClick={decreasePlaybackRate} color="secondary" variant='outlined' sx={{ mx: 2, mt: 1 }}>-</Button>
-                        <br />
-                    </Box>
+                    </Stack>
                 </Box>
+                <ShareDialog
+                    open={shareDialogOpen}
+                    project={project}
+                    handleShareDialogClose={handleShareDialogClose} />
             </Box>
         </Box>);
 };

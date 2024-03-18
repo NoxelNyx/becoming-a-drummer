@@ -147,23 +147,7 @@ export default function HelpPanel({ }: HelpPanelProps) {
                                 </Typography>
                             </AccordionDetails>
                         </Accordion>
-                        <Accordion>
-                            <AccordionSummary
-                                expandIcon={<ExpandMore />}>
-                                <Typography>Bookmark Video</Typography>
-                            </AccordionSummary>
-                            <Divider />
-                            <AccordionDetails>
-                                <Typography sx={{ ml: 2 }}>
-                                    <p className="inline">Bookmark a video by clicking the bookmark
-                                        <Image src={bookmarkBtnImage} height='40' alt='bookmark button' className='mx-1 inline' /> button.</p>
-                                    <br />
-                                    <br />
-                                    Once bookmarked, you can access the video from the <b>Bookmarks</b> <Image src={contentPanelHeaderBookmardImage} height='40' alt='content panel header bookmark' className='mx-1 inline' /> tab of the content panel (click the <ArrowBackIos sx={{ ml: 1 }} /> icon to the right of the screen to open the content panel).
-                                </Typography>
-                            </AccordionDetails>
-                        </Accordion>
-                        <Accordion>
+                        {/* <Accordion>
                             <AccordionSummary
                                 expandIcon={<ExpandMore />}>
                                 <Typography>Community Content</Typography>
@@ -202,7 +186,7 @@ export default function HelpPanel({ }: HelpPanelProps) {
                                     4. Click a <b>content tile</b> <Image src={communityContentTileImage} height='200' className='mx-1' alt='community content tile' /> to save the transcription. You will be redirected to the video.
                                 </Typography>
                             </AccordionDetails>
-                        </Accordion>
+                        </Accordion> */}
                     </Box>
                     <Box>
                         <Typography sx={{ mt: 4, pb: 2 }} fontWeight='bold' color="secondary">Advanced Functions:</Typography>
