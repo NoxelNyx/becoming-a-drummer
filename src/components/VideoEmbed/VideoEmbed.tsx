@@ -209,6 +209,7 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
                                             index={index}
                                             defaultEdit={section.defaultEdit}
                                             isLocal={section.isLocal}
+                                            name={section.name}
                                             handleSaveSection={handleSaveSection}
                                             handleRemoveSection={handleRemoveSection}
                                             deactivateSections={deactivateSections}

@@ -1,5 +1,5 @@
 import { Delete, Edit, Check } from '@mui/icons-material';
-import { Box, Card, CardActionArea, CardContent, IconButton } from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, Divider, IconButton, TextField } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers';
 import React from 'react';
 import { YouTubePlayer } from 'react-youtube';
@@ -15,6 +15,7 @@ interface SectionCardProps {
     index: number,
     defaultEdit?: boolean,
     isLocal: boolean,
+    name?: string,
     handleSaveSection: (section: Section, index: number) => void,
     handleRemoveSection: (index: number, isLocal: boolean) => void,
     deactivateSections: () => void,
@@ -30,6 +31,7 @@ export default function SectionCard({
     index,
     defaultEdit,
     isLocal,
+    name,
     handleSaveSection,
     handleRemoveSection,
     deactivateSections,
@@ -40,6 +42,7 @@ export default function SectionCard({
     const [editEnabled, setEditEnabled] = React.useState(defaultEdit || false);
     const [newStart, setNewStart] = React.useState<Dayjs | null>(dayjs(start));
     const [newEnd, setNewEnd] = React.useState<Dayjs | null>(dayjs(end));
+    const [newName, setNewName] = React.useState<string | undefined>(name);
 
     const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -51,12 +54,13 @@ export default function SectionCard({
         e.stopPropagation();
         setEditEnabled(false);
 
-        if (newStart?.valueOf() !== start || newEnd?.valueOf() !== end || isLocal)
+        if (newStart?.valueOf() !== start || newEnd?.valueOf() !== end || isLocal || newName !== name)
             handleSaveSection({
                 isLocal: false,
                 start: newStart?.valueOf() as number,
                 end: newEnd?.valueOf() as number,
-                active
+                active,
+                name: newName
             }, index);
     };
 
@@ -123,6 +127,10 @@ export default function SectionCard({
         }
     }, [editEnabled, handleSpaceKey, playerRef, start, handleStateChange, active, setRepeat, deactivateSections, activateSection, index]);
 
+    const handleNameOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewName(e.target.value);
+    };
+
     return (
         <Box>
             <Card
@@ -136,6 +144,16 @@ export default function SectionCard({
                         <Box sx={{ float: 'left', mt: '.4rem' }} display={'inline-block'}>
                             {editEnabled
                                 ? <React.Fragment>
+                                    <TextField
+                                        value={newName}
+                                        label="Name"
+                                        size='small'
+                                        color='secondary'
+                                        variant='standard'
+                                        fullWidth
+                                        sx={{ width: '170px', maxWidth: '200px', mb: 1 }}
+                                        onChange={handleNameOnChange} />
+                                    <br />
                                     <TimePicker
                                         slotProps={{ 
                                             textField: { 
@@ -166,6 +184,7 @@ export default function SectionCard({
                                         disableOpenPicker />
                                 </React.Fragment>
                                 : <React.Fragment>
+                                    <div style={{display: 'block', textAlign: 'left' }}>{name}</div>
                                     <span>Start: {dayjs(start).format('m:ss')}</span>
                                     <span className='ml-3'>End: {dayjs(end).format('m:ss')}</span>
                                 </React.Fragment>

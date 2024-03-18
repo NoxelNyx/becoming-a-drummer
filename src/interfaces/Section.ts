@@ -7,4 +7,5 @@ export default interface Section {
     active?: boolean,
     defaultEdit?: boolean,
     isLocal: boolean
+    name?: string,
 };
