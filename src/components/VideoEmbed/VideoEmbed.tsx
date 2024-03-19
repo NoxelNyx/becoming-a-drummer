@@ -238,8 +238,9 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
                     <Stack>
                         <IconButton 
                             sx={{ marginBottom: 2, alignSelf: 'center' }}
-                            color='secondary'>
-                            <ShareOutlined onClick={handleShareClick} />
+                            color='secondary'
+                            onClick={handleShareClick}>
+                            <ShareOutlined />
                         </IconButton>
                         <Button onClick={increasePlaybackRate} color="secondary" variant='outlined' sx={{ mx: 2, mb: 1 }}>+</Button>
                         <Typography variant='h6' component='span'>{playbackRate}</Typography>
