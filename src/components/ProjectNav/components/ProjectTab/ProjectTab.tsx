@@ -1,11 +1,10 @@
 import React, { FC, ReactElement } from 'react';
 import { useTheme, Tab, Menu, MenuItem, ListItemIcon, Typography, Dialog, Button, DialogActions, DialogContent, DialogTitle, DialogContentText } from '@mui/material';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next-nprogress-bar';
 import { useDispatch } from 'react-redux';
-import { setCurrentProject } from '@/src/redux/slice';
 import Project from '@/src/interfaces/Project';
 import { YouTube, Delete, Close, ShareOutlined } from '@mui/icons-material';
-import { useAuthContext } from '@/src/firebase/provider';
 
 type ProjectTabProps = {
     project: Project,
@@ -26,11 +25,8 @@ const ProjectTab: FC<ProjectTabProps> = ({ project, handleProjectDelete, handleP
         mouseY: number;
       } | null>(null);
     const menuOpen = Boolean(contextMenu);
-    const user = useAuthContext();
 
     const handleOnClick = () => {
-        dispatch(setCurrentProject(project));
-
         router.push('/project/' + project.id);
     };
 

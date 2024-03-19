@@ -14,7 +14,7 @@ import ProjectNav from '@/src/components/ProjectNav';
 import HelpPanel from '@/src/components/HelpPanel';
 import { AuthContextProvider } from '@/src/firebase/provider';
 import { usePathname } from 'next/navigation';
-import NextNProgress from 'next-nprogress-bar';
+import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -52,12 +52,11 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={inter.className}>
-                <NextNProgress
+                <ProgressBar
                     height="4px"
                     color={theme.palette.secondary.dark}
                     options={{ showSpinner: false }}
-                    shallowRouting
-                    appDirectory />
+                    shallowRouting />
                 <AuthContextProvider>
                     <ThemeProvider theme={theme}>
                         <CssBaseline />

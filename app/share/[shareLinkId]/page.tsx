@@ -4,7 +4,7 @@ import React from 'react';
 import { styled } from '@mui/system';
 import { useAppDispatch } from '@/src/redux/hooks';
 import { useAuthContext } from '@/src/firebase/provider';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next-nprogress-bar';
 import LoginCard from '@/src/components/LoginCard';
 import Logo from '@/src/components/Logo';
 import { Box, CircularProgress } from '@mui/material';
