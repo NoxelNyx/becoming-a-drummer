@@ -37,7 +37,7 @@ export default function SharePage({
     React.useEffect(() => {
         if (user !== null) {
             getShareLink(params.shareLinkId).then(async link => {
-                const fetchRes = await dispatch(fetchProjectAsync({ uid: user.uid, id: link.projectId }));
+                const fetchRes = await dispatch(fetchProjectAsync({ uid: link.userId, id: link.projectId }));
                 const sharedProject = fetchRes.payload as Project;
 
                 if (!sharedProject) {
