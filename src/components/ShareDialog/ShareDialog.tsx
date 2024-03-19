@@ -210,6 +210,9 @@ const ShareDialog: FC<ShareDialogProps> = ({ open, project, handleShareDialogClo
                                 disabled
                                 value={project.shareLink}
                                 variant='standard'
+                                InputProps={{
+                                    sx: { fontSize: '14px' }
+                                }}
                                 color='secondary' />
                             <Typography
                                 variant='caption'
