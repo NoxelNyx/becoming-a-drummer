@@ -98,6 +98,7 @@ export default function SectionCard({
 
     const handleClick = React.useCallback(() => {
         if (editEnabled) return;
+        
         if (playerRef === null) {
             activateSection(index);
             deactivateSections();
