@@ -51,7 +51,7 @@ export default function RootLayout({
 
     return (
         <html lang="en">
-            <body className={inter.className}>
+            <body className={inter.className} style={{ overflow: 'hidden' }}>
                 <ProgressBar
                     height="4px"
                     color={theme.palette.secondary.dark}
