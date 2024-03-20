@@ -39,14 +39,39 @@ export default function ProjectPage({
     const [currentSlide, setCurrentSlide] = React.useState<string>('l');
     const [transitionDone, setTransitionDone] = React.useState<boolean>(true);
 
+    const handleCtrlRightKey = React.useCallback((e: KeyboardEvent) => {
+        if (e.ctrlKey && e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+
+            setCurrentSlide('r');
+        }
+    }, []);
+
+    const handleCtrlLeftKey = React.useCallback((e: KeyboardEvent) => {
+        if (e.ctrlKey && e.key === 'ArrowLeft') {
+            e.preventDefault();
+            e.stopPropagation();
+
+            setCurrentSlide('l');
+        }
+    }, []);
+
     React.useEffect(() => {
         if (user === null)
             router.push('/');
-    }, [user, router, project]);
+
+        window.addEventListener('keydown', handleCtrlRightKey);
+        window.addEventListener('keydown', handleCtrlLeftKey);
+
+        return () => { 
+            window.removeEventListener('keydown', handleCtrlRightKey);
+            window.removeEventListener('keydown', handleCtrlLeftKey);
+        }
+    }, [user, router, project, handleCtrlRightKey, handleCtrlLeftKey]);
 
     const handleToggle = () => {
         const newSlide = currentSlide === 'l' ? 'r' : 'l';
-        const body = document.querySelector('body') as HTMLBodyElement;
 
         setTransitionDone(false);
         setCurrentSlide(newSlide);
