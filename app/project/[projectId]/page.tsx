@@ -2,17 +2,25 @@
 
 import React from 'react';
 import { styled } from '@mui/system';
+import { Box, Slide, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { SwitchLeft, SwitchRight } from '@mui/icons-material';
 import { useAuthContext } from '@/src/firebase/provider';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/src/redux/hooks';
 import { selectProject } from '@/src/components/ProjectNav/slice';
 import VideoEmbed from '@/src/components/VideoEmbed';
 import LessonPanel from '@/src/components/LessonPanel';
+import Project from '@/src/interfaces/Project';
 
 const styles = {
     root: {
         textAlign: 'center',
         marginTop: '3rem',
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    toggleButton: {
+        maxHeight: '35px'
     }
 };
 
@@ -27,21 +35,51 @@ export default function ProjectPage({
 }) {
     const user = useAuthContext();
     const router = useRouter();
-    const project = useAppSelector(selectProject(params.projectId));
+    const project = useAppSelector(selectProject(params.projectId)) as Project;
+    const [currentSlide, setCurrentSlide] = React.useState<string>('l');
+    const [transitionDone, setTransitionDone] = React.useState<boolean>(true);
 
     React.useEffect(() => {
         if (user === null)
             router.push('/');
-    }, [user, router]);
+    }, [user, router, project]);
+
+    const handleToggle = () => {
+        const newSlide = currentSlide === 'l' ? 'r' : 'l';
+
+        setTransitionDone(false);
+        setCurrentSlide(newSlide);
+
+        setTimeout(() => {
+            setTransitionDone(true);    
+        }, 100);
+    }
 
     return (
         <Div sx={styles.root}>
-            {project && 
-                project?.type === 'youtube' &&
-                    <VideoEmbed project={project} />
+            {currentSlide === 'l' && transitionDone &&
+                <ToggleButton value="l" aria-label="phone" onClick={handleToggle} sx={styles.toggleButton}>
+                    <SwitchLeft />
+                </ToggleButton>
             }
-            {project && 
-                <LessonPanel project={project} />
+            <Slide in={currentSlide=='l'} direction="left">
+                <Box
+                    position={'absolute'}>
+                    {project?.type === 'youtube' &&
+                        <VideoEmbed project={project} />
+                    }
+                </Box>
+            </Slide>
+            <Slide in={currentSlide=='r'} direction="right">
+                <Box
+                    width={'100%'}>
+                    <LessonPanel project={project || {} as Project} />
+                </Box>
+            </Slide>
+            {currentSlide === 'r' && transitionDone &&
+                <ToggleButton value="r" aria-label="phone" onClick={handleToggle} sx={{ ...styles.toggleButton, margin: '1rem' }}>
+                    <SwitchRight />
+                </ToggleButton>
             }
         </Div>
     );
