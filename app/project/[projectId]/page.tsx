@@ -75,11 +75,11 @@ export default function ProjectPage({
 
         setTransitionDone(false);
         setCurrentSlide(newSlide);
+    };
 
-        setTimeout(() => {
-            setTransitionDone(true);
-        }, 100);
-    }
+    const handleTransitionDone = () => {
+        setTransitionDone(true);
+    };
 
     return (
         <Div sx={styles.root}>
@@ -88,7 +88,7 @@ export default function ProjectPage({
                     <SwitchLeft />
                 </ToggleButton>
             }
-            <Slide in={currentSlide=='l'} direction="right">
+            <Slide in={currentSlide=='l'} direction="right" addEndListener={handleTransitionDone}>
                 <Box
                     position={'absolute'}>
                     {project?.type === 'youtube' &&
@@ -96,7 +96,7 @@ export default function ProjectPage({
                     }
                 </Box>
             </Slide>
-            <Slide in={currentSlide=='r'} direction="left">
+            <Slide in={currentSlide=='r'} direction="left" addEndListener={handleTransitionDone}>
                 <Box
                     width={'100%'}>
                     <LessonPanel project={project || {} as Project} />
