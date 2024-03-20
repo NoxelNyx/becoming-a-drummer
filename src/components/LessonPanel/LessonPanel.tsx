@@ -121,7 +121,7 @@ export default function LessonPanel({ className, project }: LessonPanelProps) {
     const open = Boolean(popoverAnchorEl);
 
     return (
-        <Box sx={{ width: '100%', height: '100vh', bgcolor: 'background.paper' }} className={className}>
+        <Box sx={{ width: '100%', height: '600px', bgcolor: 'background.paper' }} className={className}>
             <Box display='flex' marginBottom={2} marginLeft={2} alignItems={'left'}>
                 <Fab color='secondary' size='small' aria-label='new' sx={{ mr: 2 }} onClick={handlePopoverOpen}>
                     <Add />

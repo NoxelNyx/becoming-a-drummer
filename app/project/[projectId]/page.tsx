@@ -46,12 +46,13 @@ export default function ProjectPage({
 
     const handleToggle = () => {
         const newSlide = currentSlide === 'l' ? 'r' : 'l';
+        const body = document.querySelector('body') as HTMLBodyElement;
 
         setTransitionDone(false);
         setCurrentSlide(newSlide);
 
         setTimeout(() => {
-            setTransitionDone(true);    
+            setTransitionDone(true);
         }, 100);
     }
 
