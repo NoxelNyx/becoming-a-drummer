@@ -19,6 +19,7 @@ export async function fetchProjects(uid: string) {
 };
 
 export async function setProject(uid: string, project: Project) {
+    debugger;
     await setDoc(doc(db, `users/${uid}/projects/${project.id}`), project);
 
     return project;

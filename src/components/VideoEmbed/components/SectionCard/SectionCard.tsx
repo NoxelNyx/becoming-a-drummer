@@ -42,7 +42,7 @@ export default function SectionCard({
     const [editEnabled, setEditEnabled] = React.useState(defaultEdit || false);
     const [newStart, setNewStart] = React.useState<Dayjs | null>(dayjs(start));
     const [newEnd, setNewEnd] = React.useState<Dayjs | null>(dayjs(end));
-    const [newName, setNewName] = React.useState<string | undefined>(name);
+    const [newName, setNewName] = React.useState<string>(name || '');
 
     const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
