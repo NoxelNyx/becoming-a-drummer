@@ -58,11 +58,11 @@ export default function ProjectPage({
     return (
         <Div sx={styles.root}>
             {currentSlide === 'l' && transitionDone &&
-                <ToggleButton value="l" aria-label="phone" onClick={handleToggle} sx={styles.toggleButton}>
+                <ToggleButton value="l" aria-label="right" onClick={handleToggle} sx={styles.toggleButton}>
                     <SwitchLeft />
                 </ToggleButton>
             }
-            <Slide in={currentSlide=='l'} direction="left">
+            <Slide in={currentSlide=='r'} direction="right">
                 <Box
                     position={'absolute'}>
                     {project?.type === 'youtube' &&
@@ -70,14 +70,14 @@ export default function ProjectPage({
                     }
                 </Box>
             </Slide>
-            <Slide in={currentSlide=='r'} direction="right">
+            <Slide in={currentSlide=='l'} direction="left">
                 <Box
                     width={'100%'}>
                     <LessonPanel project={project || {} as Project} />
                 </Box>
             </Slide>
             {currentSlide === 'r' && transitionDone &&
-                <ToggleButton value="r" aria-label="phone" onClick={handleToggle} sx={{ ...styles.toggleButton, margin: '1rem' }}>
+                <ToggleButton value="r" aria-label="right" onClick={handleToggle} sx={styles.toggleButton}>
                     <SwitchRight />
                 </ToggleButton>
             }
