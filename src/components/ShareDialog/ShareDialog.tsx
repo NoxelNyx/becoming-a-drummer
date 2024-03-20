@@ -226,7 +226,7 @@ const ShareDialog: FC<ShareDialogProps> = ({ open, project, handleShareDialogClo
                                     sx={{
                                         position: 'absolute',
                                         right: '25px',
-                                        bottom: '55px',
+                                        bottom: '100px',
                                         cursor: 'default'
                                     }}>copied</Typography>
                                 : <IconButton
@@ -234,12 +234,16 @@ const ShareDialog: FC<ShareDialogProps> = ({ open, project, handleShareDialogClo
                                     sx={{
                                         position: 'absolute',
                                         right: '25px',
-                                        bottom: '45px'
+                                        bottom: '90px'
                                     }}>
                                     <CopyAllOutlined />
                                 </IconButton>
                             }
-                            
+                            <Divider sx={{ marginY: '.5rem' }} />
+                            <Typography
+                                variant='caption'>
+                                    *Sharing a project does not give other users the ability to modify it.
+                            </Typography>
                         </React.Fragment> :
                         <React.Fragment>
                             <LoadingButton
