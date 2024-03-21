@@ -6,7 +6,7 @@ import { useAppSelector, useAppDispatch } from '@/src/redux/hooks';
 import { useAuthContext } from '@/src/firebase/provider';
 import SectionCard from './components/SectionCard';
 import dayjs from 'dayjs';
-import { getCurrentBreakpoint } from '@/app/layout';
+import { getCurrentBreakpoint } from '@/app/template';
 import { setProjectLocal, setProjectAsync } from '@/src/components/ProjectNav/slice';
 import Section from '@/src/interfaces/Section';
 import Project from '@/src/interfaces/Project';

@@ -16,7 +16,6 @@ type ProjectTabProps = {
 const ProjectTab: FC<ProjectTabProps> = ({ project, handleProjectDelete, handleProjectClose, handleProjectShare }): ReactElement => {
     const theme = useTheme();
     const router = useRouter();
-    const dispatch = useDispatch();
     const { projectId: activeProjectId } = useParams();
     const active = project.id === activeProjectId;
     const [confirmationOpen, setConfirmationOpen] = React.useState(false);

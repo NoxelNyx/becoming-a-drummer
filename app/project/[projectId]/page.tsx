@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { styled } from '@mui/system';
-import { Box, Slide, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Box, Slide, ToggleButton } from '@mui/material';
 import { SwitchLeft, SwitchRight } from '@mui/icons-material';
 import { useAuthContext } from '@/src/firebase/provider';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next-nprogress-bar';
 import { useAppSelector } from '@/src/redux/hooks';
 import { selectProject } from '@/src/components/ProjectNav/slice';
 import VideoEmbed from '@/src/components/VideoEmbed';

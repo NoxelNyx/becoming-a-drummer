@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import { Fab, Popover, Typography, Box, Accordion, AccordionSummary, AccordionDetails, Divider } from '@mui/material';
 import { QuestionMark, ExpandMore, ArrowBackIos } from '@mui/icons-material';
