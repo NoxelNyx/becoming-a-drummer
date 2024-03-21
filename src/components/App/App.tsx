@@ -39,7 +39,7 @@ export function getCurrentBreakpoint() {
         return 'xl';
 }
 
-export default function AppTemplate({
+export default function App({
     children,
 }: {
     children: React.ReactNode
@@ -53,11 +53,11 @@ export default function AppTemplate({
                 color={theme.palette.secondary.dark}
                 options={{ showSpinner: false }}
                 shallowRouting />
-            <AuthContextProvider>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <ProviderWrapper>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <ProviderWrapper>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <AuthContextProvider>
                             <Container className="App h-screen" maxWidth="xl">
                                 <Grid container className={pathname === '/' ? 'h-screen' : ''}>
                                     <Grid item xs={12} className="max-h-20">
@@ -68,11 +68,11 @@ export default function AppTemplate({
                                     </Grid>
                                 </Grid>
                             </Container>
-                            <HelpPanel />
-                        </LocalizationProvider>
-                    </ProviderWrapper>
-                </ThemeProvider>
-            </AuthContextProvider>
+                            <HelpPanel />        
+                        </AuthContextProvider>
+                    </LocalizationProvider>
+                </ProviderWrapper>
+            </ThemeProvider>
             <Analytics />
         </React.Fragment>
     )

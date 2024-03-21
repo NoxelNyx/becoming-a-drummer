@@ -1,5 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next';
+import App from '@/src/components/App';
 
 export const metadata: Metadata = {
     title: 'becomingadrummer.com',
@@ -14,7 +15,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body style={{ overflowX: 'hidden' }}>
-                {children}
+                <App>
+                    {children}
+                </App>
             </body>
         </html>
     )
