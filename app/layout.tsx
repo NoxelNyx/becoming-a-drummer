@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'becomingadrummer.com',
-    description: 'A web app with tools dedicated to helping you become a drummer.',
+    description: 'A web app with practice tools designed to help you become a drummer.',
 };
 
 export default function RootLayout({
