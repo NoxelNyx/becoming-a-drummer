@@ -15,6 +15,7 @@ import HelpPanel from '@/src/components/HelpPanel';
 import { AuthContextProvider } from '@/src/firebase/provider';
 import { usePathname } from 'next/navigation';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
+import { GoogleTagManager } from '@next/third-parties/google';
 
 let theme: Theme = createTheme({
     palette: {
@@ -76,6 +77,7 @@ export default function App({
             </ThemeProvider>
             <Analytics />
             <SpeedInsights />
+            <GoogleTagManager gtmId='AW-16507249827' />
         </React.Fragment>
     )
 }

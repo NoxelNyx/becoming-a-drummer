@@ -15,6 +15,7 @@
     "@mui/lab": "^5.0.0-alpha.134",
     "@mui/material": "^5.13.5",
     "@mui/x-date-pickers": "^6.9.2",
+    "@next/third-parties": "^14.1.4",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/node": "20.3.1",
     "@types/react": "18.2.12",
