@@ -3,6 +3,7 @@
 import '@/app/globals.css';
 import React from 'react'
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ProviderWrapper } from '@/src/redux/provider';
 import { createTheme, Theme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -74,6 +75,7 @@ export default function App({
                 </ProviderWrapper>
             </ThemeProvider>
             <Analytics />
+            <SpeedInsights />
         </React.Fragment>
     )
 }
