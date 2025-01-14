@@ -44,13 +44,14 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
     const theme = useTheme();
     const user = useAuthContext();
     const currentBreakpoint = getCurrentBreakpoint();
-    const [playbackTempo, setPlaybackTempo] = useState<number>(0);
     const [recording, setRecording] = useState<boolean>(false);
     const [newSectionStartTime, setNewSectionStartTime] = useState<number>(0);
     const [playerRef, setPlayerRef] = useState<any>(null);
     const [shareDialogOpen, setShareDialogOpen] = useState<boolean>(false);
     const [changeTempoPopover, setChangeTempoPopover] = React.useState<HTMLButtonElement | null>(null);
+
     const trackTempo = project.tempo || 0;
+    const [playbackTempo, setPlaybackTempo] = useState<number>(trackTempo);
     const [newTrackTempo, setNewTrackTempo] = useState<number>(trackTempo);
 
     const options = {
