@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { use } from 'react';
 import { styled } from '@mui/system';
 import { Box, Slide, ToggleButton } from '@mui/material';
 import { SwitchLeft, SwitchRight } from '@mui/icons-material';
@@ -29,13 +29,14 @@ const Div = styled('div')(styles);
 export default function ProjectPage({
     params 
 }: {
-    params: { 
+    params: Promise<{ 
         projectId: string
-    }
+    }>
 }) {
     const user = useAuthContext();
     const router = useRouter();
-    const project = useAppSelector(selectProject(params.projectId)) as Project;
+    const { projectId } = use(params);
+    const project = useAppSelector(selectProject(projectId)) as Project;
     const [currentSlide, setCurrentSlide] = React.useState<string>('l');
     const [transitionDone, setTransitionDone] = React.useState<boolean>(true);
 

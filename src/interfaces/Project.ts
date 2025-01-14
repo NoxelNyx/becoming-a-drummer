@@ -14,5 +14,6 @@ export default interface Project {
     shared: boolean,
     sharedWith?: User[],
     sharedWithIds?: string[],
-    shareLink?: string
+    shareLink?: string,
+    tempo?: number,
 };

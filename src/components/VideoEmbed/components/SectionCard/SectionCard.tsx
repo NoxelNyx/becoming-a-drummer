@@ -133,15 +133,15 @@ export default function SectionCard({
     };
 
     return (
-        <Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Card
                 onClick={handleClick}
                 variant={active ? 'outlined' : 'elevation'}
                 color={active ? 'secondary' : 'primary'}
                 elevation={active ? 0 : 3}
-                sx={{ cursor: 'pointer' }}>
+                sx={{ cursor: 'pointer', display: 'flex', width: '100%' }}>
                 <CardActionArea>
-                    <CardContent sx={{ p: 0, pl: 1.5 }}>
+                    <CardContent sx={{ p: 0, px: 1.5 }}>
                         <Box sx={{ float: 'left', mt: '.4rem' }} display={'inline-block'}>
                             {editEnabled
                                 ? <React.Fragment>
@@ -186,27 +186,27 @@ export default function SectionCard({
                                 </React.Fragment>
                                 : <React.Fragment>
                                     <div style={{display: 'block', textAlign: 'left' }}>{name}</div>
-                                    <span>Start: {dayjs(start).format('m:ss')}</span>
-                                    <span className='ml-3'>End: {dayjs(end).format('m:ss')}</span>
+                                    <span style={{fontSize: '10pt'}}>Start: {dayjs(start).format('m:ss')}</span>
+                                    <span style={{fontSize: '10pt'}} className='ml-3'>End: {dayjs(end).format('m:ss')}</span>
                                 </React.Fragment>
                             }
-                        </Box>
-                        <Box sx={{ float: 'right' }}>
-                            {editEnabled
-                                ? <IconButton onClick={handleSave}>
-                                    <Check color='secondary' fontSize='small' />
-                                </IconButton>
-                                : <IconButton onClick={handleEdit}>
-                                    <Edit color='secondary' fontSize='small' />
-                                </IconButton>
-                            }
-                            <IconButton onClick={handleDelete} >
-                                <Delete color='secondary' fontSize='small' />
-                            </IconButton>
-                        </Box>
+                        </Box>     
                     </CardContent>
                 </CardActionArea>
             </Card>
+            <Box sx={{ display: 'inline-flex', flexWrap: 'wrap', flexDirection: 'column', marginLeft: '10px' }}>
+                {editEnabled
+                    ? <IconButton onClick={handleSave} size='small'>
+                        <Check color='secondary' fontSize='small' />
+                    </IconButton>
+                    : <IconButton onClick={handleEdit} size='small'>
+                        <Edit color='secondary' fontSize='small' />
+                    </IconButton>
+                }
+                <IconButton onClick={handleDelete} size='small'>
+                    <Delete color='secondary' fontSize='small' />
+                </IconButton>
+            </Box>
         </Box>
     )
 }

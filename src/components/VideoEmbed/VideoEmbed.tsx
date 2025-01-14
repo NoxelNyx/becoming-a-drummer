@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
-import { Button, Typography, IconButton, Box, Stack, useTheme, useMediaQuery } from '@mui/material';
-import { Bookmark, BookmarkBorder, FiberManualRecord, Pause, Share, ShareOutlined } from '@mui/icons-material';
+import { Button, Typography, IconButton, Box, Stack, useTheme, useMediaQuery, TextField, Tooltip, Popover, Icon } from '@mui/material';
+import { Bookmark, BookmarkBorder, FiberManualRecord, Pause, Share, ShareOutlined, Edit, Add, Remove, Check } from '@mui/icons-material';
 import YouTube, { YouTubeEvent } from 'react-youtube';
 import { useAppSelector, useAppDispatch } from '@/src/redux/hooks';
 import { useAuthContext } from '@/src/firebase/provider';
@@ -44,31 +44,42 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
     const theme = useTheme();
     const user = useAuthContext();
     const currentBreakpoint = getCurrentBreakpoint();
-    const [playbackRate, setPlaybackRate] = useState<number>(1);
+    const [playbackTempo, setPlaybackTempo] = useState<number>(0);
     const [recording, setRecording] = useState<boolean>(false);
     const [newSectionStartTime, setNewSectionStartTime] = useState<number>(0);
     const [playerRef, setPlayerRef] = useState<any>(null);
     const [shareDialogOpen, setShareDialogOpen] = useState<boolean>(false);
+    const [changeTempoPopover, setChangeTempoPopover] = React.useState<HTMLButtonElement | null>(null);
+    const trackTempo = project.tempo || 0;
+    const [newTrackTempo, setNewTrackTempo] = useState<number>(trackTempo);
 
     const options = {
         height: videoSizes[currentBreakpoint].height,
         width: videoSizes[currentBreakpoint].width,
     };
 
-    const increasePlaybackRate = async () => {
-        const currentRate = await playerRef.getPlaybackRate() as number;
-        const newRate = Math.round((currentRate + .05) * 100) / 100;
+    const changeTempo = (tempo: number) => {
+        let newRate = Math.round((tempo / trackTempo) * 100) / 100;
+
+        if (newRate > 1.5) {
+            newRate = 1.5;
+            tempo = Math.round((trackTempo * 1.5));
+        }
 
         playerRef.setPlaybackRate(newRate);
-        setPlaybackRate(newRate);
+        setPlaybackTempo(tempo);
+    }
+
+    const increasePlaybackRate = () => {
+        const newTempo = playbackTempo + (trackTempo * .05);
+
+        changeTempo(newTempo);
     };
 
-    const decreasePlaybackRate = async () => {
-        const currentRate = await playerRef.getPlaybackRate() as number;
-        const newRate = Math.round((currentRate - .05) * 100) / 100;
+    const decreasePlaybackRate = () => {
+        const newTempo = playbackTempo - (trackTempo * .05);
 
-        playerRef.setPlaybackRate(newRate);
-        setPlaybackRate(newRate);
+        changeTempo(newTempo);
     };
 
     const onPlayerReady = (e: YouTubeEvent) => {
@@ -167,6 +178,15 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
             }));
     };
 
+    const handleTempoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let newTempo = parseInt(e.target.value);
+
+        if (isNaN(newTempo))
+            newTempo = 0;
+
+        setNewTrackTempo(newTempo);
+    };
+
     const handleShareClick = () => {
         setShareDialogOpen(true);
     };
@@ -174,6 +194,30 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
     const handleShareDialogClose = () => {
         setShareDialogOpen(false);
     };
+
+    const handleChangeTempoPopoverOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setChangeTempoPopover(event.currentTarget);
+    };
+
+    const handleSaveTrackTempo = async () => {
+        await dispatch(setProjectAsync({
+            uid: user?.uid as string,
+            project: {
+                ...project,
+                tempo: newTrackTempo,
+            }
+        }));
+
+        changeTempo(newTrackTempo);
+        setChangeTempoPopover(null);
+    };
+
+    const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter')
+            handleSaveTrackTempo();
+    };
+
+    const changeTempoPopoverOpen = Boolean(changeTempoPopover);
 
     return (
         <Box className="video-embed" display='flex' justifyContent={'center'} pr={{ lg: 0, xl: 18 }}>
@@ -205,7 +249,7 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
                                             end={section.end as number}
                                             playerRef={playerRef}
                                             active={section.active as boolean}
-                                            playbackRate={playbackRate}
+                                            playbackRate={playerRef.getPlaybackRate()}
                                             index={index}
                                             defaultEdit={section.defaultEdit}
                                             isLocal={section.isLocal}
@@ -237,14 +281,71 @@ const VideoEmbed: FC<VideoEmbedProps> = ({ project }) => {
                 <Box className='action-buttons align-top' display='inline-block' justifyContent='space-between' flexDirection='column'>
                     <Stack>
                         <IconButton 
-                            sx={{ marginBottom: 2, alignSelf: 'center' }}
+                            sx={{ marginBottom: 4, marginLeft: 1, alignSelf: 'center' }}
                             color='secondary'
                             onClick={handleShareClick}>
                             <ShareOutlined />
                         </IconButton>
-                        <Button onClick={increasePlaybackRate} color="secondary" variant='outlined' sx={{ mx: 2, mb: 1 }}>+</Button>
-                        <Typography variant='h6' component='span'>{playbackRate}</Typography>
-                        <Button onClick={decreasePlaybackRate} color="secondary" variant='outlined' sx={{ mx: 2, mt: 1 }}>-</Button>
+                        <IconButton 
+                            sx={{ marginBottom: 1, marginLeft: 1, alignSelf: 'center' }}
+                            color='secondary'
+                            onClick={increasePlaybackRate}>
+                            <Add />
+                        </IconButton>
+                        <Stack sx={{ alignItems: 'center', marginLeft: '10px' }}>
+                            <TextField
+                                variant="standard"
+                                sx={{ width: '30px' }}
+                                value={playbackTempo}
+                                onChange={handleTempoChange}
+                                inputProps={{
+                                    sx: { textAlign: 'center' }
+                                }}
+                                disabled />
+                            <Tooltip title="Change Track Tempo">
+                                <Button
+                                    sx={{
+                                        color: '#fff',
+                                        minWidth: '30px',
+                                        paddingY: .5,
+                                    }}
+                                    onClick={handleChangeTempoPopoverOpen}>{trackTempo}</Button>
+                            </Tooltip>
+                            <Popover
+                                open={changeTempoPopoverOpen}
+                                anchorEl={changeTempoPopover}
+                                onClose={() => setChangeTempoPopover(null)}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'left',
+                                }}>
+                                <Box sx={{ p: 1, maxWidth: '100px' }}>
+                                    <TextField
+                                        sx={{ display: 'inline-block', maxWidth: '50px' }}
+                                        label="Tempo"
+                                        variant="standard"
+                                        value={newTrackTempo}
+                                        onKeyDown={handleEnter}
+                                        onChange={handleTempoChange} />
+                                    <IconButton
+                                        sx={{ display: 'inline-block', verticalAlign: 'bottom' }}
+                                        onClick={handleSaveTrackTempo}
+                                        size='small'>
+                                        <Check />
+                                    </IconButton>
+                                </Box>
+                            </Popover>
+                        </Stack>
+                        <IconButton 
+                            sx={{ marginBottom: 2, marginLeft: 1, marginTop: 1, alignSelf: 'center' }}
+                            color='secondary'
+                            onClick={decreasePlaybackRate}>
+                            <Remove />
+                        </IconButton>
                     </Stack>
                 </Box>
                 <ShareDialog

@@ -34,7 +34,7 @@ export const shareDialogSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(searchUsersAsync.fulfilled, (state, action) => {
+        builder.addCase(searchUsersAsync.fulfilled, (state, action: PayloadAction<User[]>) => {
             state.searchResults = action.payload;
         });
     }
