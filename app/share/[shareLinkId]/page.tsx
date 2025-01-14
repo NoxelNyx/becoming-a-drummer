@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { use } from 'react';
 import { styled } from '@mui/system';
 import { useAppDispatch } from '@/src/redux/hooks';
 import { useAuthContext } from '@/src/firebase/provider';
@@ -26,17 +26,18 @@ const Div = styled('div')(styles);
 export default function SharePage({
     params 
 }: {
-    params: { 
+    params: Promise<{ 
         shareLinkId: string
-    }
+    }>
 }) {
     const user = useAuthContext();
     const router = useRouter();
     const dispatch = useAppDispatch();
+    const { shareLinkId } = use(params);
 
     React.useEffect(() => {
         if (user !== null) {
-            getShareLink(params.shareLinkId).then(async link => {
+            getShareLink(shareLinkId).then(async link => {
                 const fetchRes = await dispatch(fetchProjectAsync({ uid: link.userId, id: link.projectId }));
                 const sharedProject = fetchRes.payload as Project;
 
@@ -64,7 +65,7 @@ export default function SharePage({
                 router.push('/project/' + newProject.id);
             });
         }
-    }, [user, params.shareLinkId, router, dispatch]);
+    }, [user, shareLinkId, router, dispatch]);
 
     return (
         <Div sx={styles.root}>
